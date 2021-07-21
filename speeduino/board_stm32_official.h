@@ -64,7 +64,7 @@ extern "C" char* sbrk(int incr);
   #ifdef USE_SPI_EEPROM
     #define pinIsReserved(pin)  ( ((pin) == PA11) || ((pin) == PA12) || ((pin) == PB3) || ((pin) == PB4) || ((pin) == USE_SPI_EEPROM)  ) //Forbiden pins like USB
   #else
-    #define pinIsReserved(pin)  ( ((pin) == PA11) || ((pin) == PA12) || ((pin) == PB3) || ((pin) == PB4) || ((pin) == PB5) || ((pin) == PB0) ) //Forbiden pins like USB
+    #define pinIsReserved(pin)  ( ((pin) == PB12) || ((pin) == PB13) || ((pin) == PA11) || ((pin) == PA12) || ((pin) == PB3) || ((pin) == PB4) ) //Forbiden pins like USB
   #endif
 #endif
 

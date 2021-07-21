@@ -15,7 +15,7 @@ STM32_CAN Can0 (_CAN1,DEF);
 #if defined(SRAM_AS_EEPROM)
     BackupSramAsEEPROM EEPROM;
 #elif defined(USE_SPI_EEPROM)
-    SPIClass SPI_for_flash(PB15, PB14, PB13, PB12); //SPI1_MOSI, SPI1_MISO, SPI1_SCK
+    SPIClass SPI_for_flash(113, 112, 111); //SPI1_MOSI, SPI1_MISO, SPI1_SCK
  
     //windbond W25Q16 SPI flash EEPROM emulation
     EEPROM_Emulation_Config EmulatedEEPROMMconfig{255UL, 4096UL, 31, 0x00100000UL};
