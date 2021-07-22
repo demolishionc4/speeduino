@@ -7,6 +7,22 @@
 
 void setupBoard()
 {
+
+}
+
+void initialiseBoard()
+{
+  //CAN BUS
+  STM32_CAN Can0(_CAN1, DEF);
+  STM32_CAN Can1(_CAN2, ALT);
+
+  //STATUS LED
+  pinMode(LED_RUNNING, OUTPUT);
+  pinMode(LED_WARNING, OUTPUT);
+  pinMode(LED_ALERT, OUTPUT);
+  pinMode(LED_COMS, OUTPUT);
+
+  //SPI FLASH
   
   #define PIN_SERIAL_RX        PA10
   #define PIN_SERIAL_TX        PA9
@@ -37,50 +53,31 @@ void setupBoard()
   
   #define pinIsReserved(pin) (((pin) == PA11) || ((pin) == PA12) || ((pin) == USE_SPI_EEPROM))
 #endif
-
-}
-
-void initialiseBoard()
-{
-  //CAN BUS
-  STM32_CAN Can0(_CAN1, DEF);
-  STM32_CAN Can1(_CAN2, ALT);
-
-  //STATUS LED
-  pinMode(PG9, OUTPUT);
-  pinMode(PG10, OUTPUT);
-  pinMode(PG11, OUTPUT);
-  pinMode(PG12, OUTPUT);
-
-  //SPI FLASH
 }
 
 void runLoop()
 {
   if ( (Serial.available()) > 0){
-    digitalToggle(PG12);
+    digitalToggle(LED_COMS);
   }
 
   if (BIT_CHECK(LOOP_TIMER, BIT_TIMER_1HZ)) //1 hertz
   {
-    digitalToggle(PG9);
-    
-    pinMode(PB12, OUTPUT);
+    digitalToggle(LED_RUNNING);
   }
   if (BIT_CHECK(LOOP_TIMER, BIT_TIMER_4HZ)) //4 hertz
   {
-    digitalToggle(PG10);
+    digitalToggle(LED_WARNING);
   }
   if (BIT_CHECK(LOOP_TIMER, BIT_TIMER_10HZ)) //10 hertz
   {
-    digitalToggle(PG11);
+    digitalToggle(LED_ALERT);
   }
   if (BIT_CHECK(LOOP_TIMER, BIT_TIMER_15HZ)) //15 hertz
   {
   }
   if (BIT_CHECK(LOOP_TIMER, BIT_TIMER_30HZ)) //30 hertz
-  {
-    
+  {    
     digitalToggle(PB12);
     digitalToggle(PB13);
     digitalToggle(PB14);    
