@@ -40,6 +40,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "utilities.h"
 #include "engineProtection.h"
 #include "secondaryTables.h"
+#include "opf_core.h"
 #include BOARD_H //Note that this is not a real file, it is defined in globals.h. 
 
 int ignition1StartAngle = 0;
@@ -85,7 +86,9 @@ uint16_t staged_req_fuel_mult_sec = 0;
 void setup()
 {
   initialisationComplete = false; //Tracks whether the initialiseAll() function has run completely
+  setupBoard();
   initialiseAll();
+  initialiseBoard();
 }
 /** Speeduino main loop.
  * 
@@ -108,7 +111,8 @@ void loop()
   
       mainLoopCount++;
       LOOP_TIMER = TIMER_mask;
-
+      
+      runLoop();
       //SERIAL Comms
       //Initially check that the last serial send values request is not still outstanding
       if (serialInProgress == true) 
