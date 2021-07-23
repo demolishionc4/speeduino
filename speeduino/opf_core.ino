@@ -3,17 +3,105 @@
 
 #include "opf_core.h"
 
-//unsigned boot_count __attribute__((__section__(".noinit")));
-
 void setupBoard()
 {
-    #if defined(USE_SPI_EEPROM)
-      pinMode(PIN_SPI_SS, OUTPUT);
-      pinMode(PIN_SPI_SCK, OUTPUT);
-      pinMode(PIN_SPI_MISO, OUTPUT);
-      pinMode(PIN_SPI_MOSI, OUTPUT);
-    #endif
+  resetPins();
+  setPins();
+  //initBoard();
 
+  STM32_CAN Can0(_CAN1, DEF);
+  STM32_CAN Can1(_CAN2, DEF);
+
+  //STATUS LED
+  pinMode(LED_RUNNING, OUTPUT);
+  digitalWrite(LED_RUNNING, LOW);
+  pinMode(LED_WARNING, OUTPUT);
+  digitalWrite(LED_WARNING, LOW);
+  pinMode(LED_ALERT, OUTPUT);
+  digitalWrite(LED_ALERT, LOW);
+  pinMode(LED_COMS, OUTPUT);
+  digitalWrite(LED_COMS, LOW);
+
+  SPIClass SPI_for_flash(PB15, PB14, PB13); //SPI1_MOSI, SPI1_MISO, SPI1_SCK
+
+  //windbond W25Q16 SPI flash EEPROM emulation
+  EEPROM_Emulation_Config EmulatedEEPROMMconfig{255UL, 4096UL, 31, 0x00100000UL};
+  Flash_SPI_Config SPIconfig{USE_SPI_EEPROM, SPI_for_flash};
+  SPI_EEPROM_Class EEPROM(EmulatedEEPROMMconfig, SPIconfig);
+
+  initialiseAll();
+  //SPI FLASH
+}
+
+void setPins()
+{
+
+  //******************************************
+  //******** Trigger CONNECTIONS ***************
+  //******************************************
+
+  pinTrigger = PE2;
+  pinTrigger2 = PE3;
+  pinTrigger3 = PE4;
+  pinVSS = PE5;
+
+  //******************************************
+  //******** ANALOG CONNECTIONS ***************
+  //******************************************
+  //ADC1 = STM_PIN_DATA_EXT(STM_MODE_ANALOG, GPIO_NOPULL, 0, 6, 0)
+
+  pinBat = PA0;  //ADC123
+  pinCLT = PA3;  //ADC12
+  pinTPS = PA1;  //ADC12
+  pinIAT = PA4;  //ADC12 LED_BUILTIN_1
+  pinO2 = PC1;   //ADC12 LED_BUILTIN_2
+  pinO2_2 = PC2; //ADC12 LED_BUILTIN_2
+  pinBaro = PC5; //ADC12
+  pinMAP = PA5;
+  pinOilPressure = PB1;  //(DO NOT USE FOR SPEEDUINO) ADC123 - SPI FLASH CHIP CS pin
+  pinFuelPressure = PB0; //ADC12
+
+  //******************************************
+  //******** INJECTOR CONNECTIONS ***************
+  //******************************************
+
+  pinInjector8 = PD13; //
+  pinInjector7 = PD12; //
+  pinInjector6 = PD11; //
+  pinInjector5 = PD10; //
+  pinInjector4 = PD9;  //
+  pinInjector3 = PD8;  //
+  pinInjector2 = PF14; //
+  pinInjector1 = PF13; //
+
+  //******************************************
+  //******** COIL CONNECTIONS ***************
+  //******************************************
+
+  pinCoil1 = PE15; //
+  pinCoil2 = PE14; //
+  pinCoil3 = PE13; //
+  pinCoil4 = PE12; //
+  pinCoil5 = PE11; //
+  pinCoil6 = PF15; //
+  pinCoil7 = PG0;  //
+  pinCoil8 = PG1;  //
+
+  //******************************************
+  //******** OTHER CONNECTIONS ***************
+  //******************************************
+
+  pinTachOut = PD14;    //Tacho output pin
+  pinIdle1 = PD15;      //Single wire idle control
+  pinIdle2 = PG2;       //2 wire idle control
+  pinBoost = PG3;       //Boost control
+  pinStepperDir = PG4;  //Direction pin  for DRV8825 driver
+  pinStepperStep = PG5; //Step pin for DRV8825 driver
+  pinFuelPump = PG6;    //Fuel pump output
+  pinFan = PG7;         //Pin for the fan output (Goes to ULN2803)
+}
+void resetPins()
+{
   pinInjector1 = BOARD_MAX_IO_PINS;
   pinInjector2 = BOARD_MAX_IO_PINS;
   pinInjector3 = BOARD_MAX_IO_PINS;
@@ -91,31 +179,17 @@ void setupBoard()
   pinMC33810_2_CS = BOARD_MAX_IO_PINS;
 }
 
-void initialiseBoard()
-{
-  //CAN BUS
-  STM32_CAN Can0(_CAN1, DEF);
-  STM32_CAN Can1(_CAN2, ALT);
-
-  //STATUS LED
-  pinMode(LED_RUNNING, OUTPUT);
-  pinMode(LED_WARNING, OUTPUT);
-  pinMode(LED_ALERT, OUTPUT);
-  pinMode(LED_COMS, OUTPUT);
-
-  //SPI FLASH
-    #if defined(USE_SPI_EEPROM)
-      pinMode(USE_SPI_EEPROM, OUTPUT);
-    #endif
-}
-
 void runLoop()
 {
   int recval = -1;
-  if (Serial.available())
+  if ((Serial.available()) > 0)
   {
     //recval = Serial.read();
     digitalToggle(LED_COMS);
+  }
+  else
+  {
+    digitalWrite(LED_COMS, LOW);
   }
 
   if (BIT_CHECK(LOOP_TIMER, BIT_TIMER_1HZ)) //1 hertz
@@ -135,7 +209,6 @@ void runLoop()
   }
   if (BIT_CHECK(LOOP_TIMER, BIT_TIMER_30HZ)) //30 hertz
   {
-
   }
 }
 

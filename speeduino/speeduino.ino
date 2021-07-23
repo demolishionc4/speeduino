@@ -85,9 +85,7 @@ uint16_t staged_req_fuel_mult_sec = 0;
 void setup()
 {
   initialisationComplete = false; //Tracks whether the initialiseAll() function has run completely
-  setupBoard();
-  initialiseAll();
-  initialiseBoard();
+  setupBoard();  
 }
 /** Speeduino main loop.
  * 

@@ -5,6 +5,7 @@
 #include <HardwareTimer.h>
 #include <HardwareSerial.h>
 #include "STM32RTC.h"
+#include "opf_core.h"
 
 #if defined(STM32F1)
 #include "stm32f1xx_ll_tim.h"
