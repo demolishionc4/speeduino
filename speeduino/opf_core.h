@@ -12,18 +12,7 @@
 #define PIN_SPI_MISO            PB14 // W25Q16 (on board flash)
 #define PIN_SPI_SCK             PB13 // W25Q16 (on board flash)
 
-//#define USE_SPI_EEPROM PB12
-
-#if defined(USE_SPI_EEPROM)
-    #define EEPROM_LIB_H "src/SPIAsEEPROM/SPIAsEEPROM.h"
-    #include EEPROM_LIB_H
-    extern SPIClass SPI_for_flash; //SPI1_MOSI, SPI1_MISO, SPI1_SCK
- 
-    //windbond W25Q16 SPI flash EEPROM emulation
-    extern EEPROM_Emulation_Config EmulatedEEPROMMconfig;
-    extern Flash_SPI_Config SPIconfig;
-    extern SPI_EEPROM_Class EEPROM;
-#endif
+#define USE_SPI_EEPROM PIN_SPI_SS
 
 #define PIN_SERIAL_RX PA10
 #define PIN_SERIAL_TX PA9

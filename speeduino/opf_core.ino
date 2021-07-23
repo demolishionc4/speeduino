@@ -7,10 +7,12 @@
 
 void setupBoard()
 {
-  pinMode(PIN_SPI_SS, OUTPUT);
-  pinMode(PIN_SPI_SCK, OUTPUT);
-  pinMode(PIN_SPI_MISO, OUTPUT);
-  pinMode(PIN_SPI_MOSI, OUTPUT);
+    #if defined(USE_SPI_EEPROM)
+      pinMode(PIN_SPI_SS, OUTPUT);
+      pinMode(PIN_SPI_SCK, OUTPUT);
+      pinMode(PIN_SPI_MISO, OUTPUT);
+      pinMode(PIN_SPI_MOSI, OUTPUT);
+    #endif
 
   pinInjector1 = BOARD_MAX_IO_PINS;
   pinInjector2 = BOARD_MAX_IO_PINS;
@@ -87,42 +89,6 @@ void setupBoard()
   pinWMIEnabled = BOARD_MAX_IO_PINS;
   pinMC33810_1_CS = BOARD_MAX_IO_PINS;
   pinMC33810_2_CS = BOARD_MAX_IO_PINS;
-
-  #if defined(USE_SPI_EEPROM)
-    SPIClass SPI_for_flash(PIN_SPI_MOSI, PIN_SPI_MISO, PIN_SPI_SCK); //SPI1_MOSI, SPI1_MISO, SPI1_SCK
-    SPI_for_flash.begin();
-      //windbond W25Q16 SPI flash EEPROM emulation
-      EEPROM_Emulation_Config EmulatedEEPROMMconfig{255UL, 4096UL, 31, 0x00100000UL};
-      Flash_SPI_Config SPIconfig{PIN_SPI_SS, SPI_for_flash};
-      SPI_EEPROM_Class EEPROM(EmulatedEEPROMMconfig, SPIconfig);
-    EEPROM.clear();
-  #endif
-
-  //analogWrite(PIN_SPI_SS, 128);
-
-  // #define PIN_SPI_SS              PB12 // W25Q16 (on board flash)
-  // #define PIN_SPI_MOSI            PB15 // W25Q16 (on board flash)
-  // #define PIN_SPI_MISO            PB14 // W25Q16 (on board flash)
-  // #define PIN_SPI_SCK             PB13 // W25Q16 (on board flash)
-
-  // #define PIN_SERIAL_RX PA10
-  // #define PIN_SERIAL_TX PA9
-
-  // #if defined(USE_SPI_EEPROM)
-
-  //   pinMode(PIN_SPI_SS, OUTPUT);
-  //   pinMode(PIN_SPI_SCK, OUTPUT);
-  //   pinMode(PIN_SPI_MISO, OUTPUT);
-  //   pinMode(PIN_SPI_MOSI, OUTPUT);
-
-  //   SPIClass SPI_for_flash(PIN_SPI_MOSI, PIN_SPI_MISO, PIN_SPI_SCK, PIN_SPI_SS); //SPI1_MOSI, SPI1_MISO, SPI1_SCK
-
-  //   EEPROM_Emulation_Config EmulatedEEPROMMconfig{255UL, 4096UL, 31, 0x00100000UL};
-  //   Flash_SPI_Config SPIconfig{USE_SPI_EEPROM, SPI_for_flash};
-  //   SPI_EEPROM_Class EEPROM(EmulatedEEPROMMconfig, SPIconfig);
-
-  // #define pinIsReserved(pin) (((pin) == PA11) || ((pin) == PA12) || ((pin) == PIN_SPI_SS))
-  // #endif
 }
 
 void initialiseBoard()
@@ -138,13 +104,9 @@ void initialiseBoard()
   pinMode(LED_COMS, OUTPUT);
 
   //SPI FLASH
-
-  // #define PIN_SERIAL_RX PA10
-  // #define PIN_SERIAL_TX PA9
-  // #define PIN_SERIAL2_RX PA10
-  // #define PIN_SERIAL2_TX PA9
-  // #define PIN_SERIAL3_RX PB10
-  // #define PIN_SERIAL3_TX PB11
+    #if defined(USE_SPI_EEPROM)
+      pinMode(USE_SPI_EEPROM, OUTPUT);
+    #endif
 }
 
 void runLoop()
@@ -155,26 +117,6 @@ void runLoop()
     //recval = Serial.read();
     digitalToggle(LED_COMS);
   }
-  // if (recval != -1)
-  // {
-  //   Serial.write(recval);
-  //   Serial1.write(recval);
-  //   recval = -1;
-  //   //delay(10);
-  //   if (Serial1.available())
-  //   {
-  //     recval = Serial1.read();
-  //   }
-  //   if (recval != -1)
-  //   {
-  //     Serial.write(recval);
-  //   }
-  // }
-
-  // if ((Serial.available()) > 0)
-  // {
-  //   digitalToggle(LED_COMS);
-  // }
 
   if (BIT_CHECK(LOOP_TIMER, BIT_TIMER_1HZ)) //1 hertz
   {
@@ -193,10 +135,7 @@ void runLoop()
   }
   if (BIT_CHECK(LOOP_TIMER, BIT_TIMER_30HZ)) //30 hertz
   {
-    digitalToggle(PB12);
-    digitalToggle(PB13);
-    digitalToggle(PB14);
-    digitalToggle(PB15);
+
   }
 }
 
