@@ -2256,11 +2256,15 @@ void setPinMapping(byte boardID)
         //******************************************
         //******** OTHER CONNECTIONS *************** 
         //******************************************
-
-        //pinSPIFlash_CS = PB12;
-        //pinFuelPump = PB13;
-        //pinFuelPump = PB14;
-        //pinFuelPump = PB15;
+       
+        pinTachOut = PD14; //Tacho output pin
+        pinIdle1 = PD15; //Single wire idle control
+        pinIdle2 = PG2; //2 wire idle control
+        pinBoost = PG3; //Boost control
+        pinStepperDir = PG4; //Direction pin  for DRV8825 driver
+        pinStepperStep = PG5; //Step pin for DRV8825 driver
+        pinFuelPump = PG6; //Fuel pump output
+        pinFan = PG7; //Pin for the fan output (Goes to ULN2803)
 
         // = PE15;  //
      #elif (defined(STM32F411xE) || defined(STM32F401xC))
