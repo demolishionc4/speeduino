@@ -18,6 +18,7 @@
 #include "idle.h"
 #include "table.h"
 #include "acc_mc33810.h"
+#include "opf_core.h"
 #include BOARD_H //Note that this is not a real file, it is defined in globals.h. 
 #include EEPROM_LIB_H
 #ifdef SD_LOGGING
@@ -340,7 +341,7 @@ void initialiseAll()
     {
         currentStatus.baro = currentStatus.MAP;
         //EEPROM.update(EEPROM_LAST_BARO, currentStatus.baro);
-        storeLastBaro(currentStatus.baro);
+        //storeLastBaro(currentStatus.baro);
     }
     else
     {
@@ -2197,147 +2198,8 @@ void setPinMapping(byte boardID)
     
  
     case 60:
-        //******************************************
-        //******** C8 CORE STM 407ZG CONNECTIONS *************** 
-        //******************************************
-        #if defined(STM32F407xx)
-
-        //******************************************
-        //******** Trigger CONNECTIONS *************** 
-        //******************************************
-        
-        pinTrigger = PE2; 
-        pinTrigger2 = PE3; 
-        pinTrigger3 = PE4;
-        pinVSS = PE5;
-
-        //******************************************
-        //******** ANALOG CONNECTIONS *************** 
-        //******************************************
-        //ADC1 = STM_PIN_DATA_EXT(STM_MODE_ANALOG, GPIO_NOPULL, 0, 6, 0)
-
-        pinBat = PA0; //ADC123
-        pinCLT = PA3; //ADC12
-        pinTPS = PA1; //ADC12
-        pinIAT = PA4; //ADC12 LED_BUILTIN_1
-        pinO2 = PC1; //ADC12 LED_BUILTIN_2
-        pinO2_2 = PC2; //ADC12 LED_BUILTIN_2
-        pinBaro = PC5; //ADC12
-        pinMAP = PA5;
-        pinOilPressure = PB1;  //(DO NOT USE FOR SPEEDUINO) ADC123 - SPI FLASH CHIP CS pin
-        pinFuelPressure = PB0; //ADC12
-
-        //******************************************
-        //******** INJECTOR CONNECTIONS *************** 
-        //******************************************
-        
-        pinInjector8 = PD13;  //
-        pinInjector7 = PD12; //
-        pinInjector6 = PD11;  //
-        pinInjector5 = PD10; //
-        pinInjector4 = PD9; //
-        pinInjector3 = PD8; //
-        pinInjector2 = PF14; //
-        pinInjector1 = PF13;  //
-        
-        //******************************************
-        //******** COIL CONNECTIONS *************** 
-        //******************************************
-
-        pinCoil1 = PE15; //
-        pinCoil2 = PE14; //
-        pinCoil3 = PE13;  //
-        pinCoil4 = PE12;  //  
-        pinCoil5 = PE11;  //
-        pinCoil6 = PF15;//
-        pinCoil7 = PG0;  //
-        pinCoil8 = PG1;//
-
-        //******************************************
-        //******** OTHER CONNECTIONS *************** 
-        //******************************************
-       
-        pinTachOut = PD14; //Tacho output pin
-        pinIdle1 = PD15; //Single wire idle control
-        pinIdle2 = PG2; //2 wire idle control
-        pinBoost = PG3; //Boost control
-        pinStepperDir = PG4; //Direction pin  for DRV8825 driver
-        pinStepperStep = PG5; //Step pin for DRV8825 driver
-        pinFuelPump = PG6; //Fuel pump output
-        pinFan = PG7; //Pin for the fan output (Goes to ULN2803)
-
-        // = PE15;  //
-     #elif (defined(STM32F411xE) || defined(STM32F401xC))
-        //pins PA12, PA11 are used for USB or CAN couldn't be used for GPIO
-        //PB2 can't be used as input becuase is BOOT pin
-        pinInjector1 = PB7; //Output pin injector 1 is on
-        pinInjector2 = PB6; //Output pin injector 2 is on
-        pinInjector3 = PB5; //Output pin injector 3 is on
-        pinInjector4 = PB4; //Output pin injector 4 is on
-        pinCoil1 = PB9; //Pin for coil 1
-        pinCoil2 = PB8; //Pin for coil 2
-        pinCoil3 = PB3; //Pin for coil 3
-        pinCoil4 = PA15; //Pin for coil 4
-        pinTPS = A2;//TPS input pin
-        pinMAP = A3; //MAP sensor pin
-        pinIAT = A0; //IAT sensor pin
-        pinCLT = A1; //CLS sensor pin
-        pinO2 = A8; //O2 Sensor pin
-        pinBat = A4; //Battery reference voltage pin
-        pinBaro = pinMAP;
-        pinTachOut = PB1; //Tacho output pin  (Goes to ULN2803)
-        pinIdle1 = PB2; //Single wire idle control
-        pinIdle2 = PB10; //2 wire idle control
-        pinBoost = PA6; //Boost control
-        pinStepperDir = PB10; //Direction pin  for DRV8825 driver
-        pinStepperStep = PB2; //Step pin for DRV8825 driver
-        pinFuelPump = PA8; //Fuel pump output
-        pinFan = PA5; //Pin for the fan output (Goes to ULN2803)
-
-        //external interrupt enabled pins
-        pinFlex = PC14; // Flex sensor (Must be external interrupt enabled)
-        pinTrigger = PC13; //The CAS pin also led pin so bad idea
-        pinTrigger2 = PC15; //The Cam Sensor pin
-
-     #elif defined(CORE_STM32)
-        //blue pill wiki.stm32duino.com/index.php?title=Blue_Pill
-        //Maple mini wiki.stm32duino.com/index.php?title=Maple_Mini
-        //pins PA12, PA11 are used for USB or CAN couldn't be used for GPIO
-        //PB2 can't be used as input becuase is BOOT pin
-        pinInjector1 = PB7; //Output pin injector 1 is on
-        pinInjector2 = PB6; //Output pin injector 2 is on
-        pinInjector3 = PB5; //Output pin injector 3 is on
-        pinInjector4 = PB4; //Output pin injector 4 is on
-        pinCoil1 = PB3; //Pin for coil 1
-        pinCoil2 = PA15; //Pin for coil 2
-        pinCoil3 = PA14; //Pin for coil 3
-        pinCoil4 = PA9; //Pin for coil 4
-        pinCoil5 = PA8; //Pin for coil 5
-        pinTPS = A0; //TPS input pin
-        pinMAP = A1; //MAP sensor pin
-        pinIAT = A2; //IAT sensor pin
-        pinCLT = A3; //CLS sensor pin
-        pinO2 = A4; //O2 Sensor pin
-        pinBat = A5; //Battery reference voltage pin
-        pinBaro = pinMAP;
-        pinIdle1 = PB2; //Single wire idle control
-        pinIdle2 = PA2; //2 wire idle control
-        pinBoost = PA1; //Boost control
-        pinVVT_1 = PA0; //Default VVT output
-        pinVVT_2 = PA2; //Default VVT2 output
-        pinStepperDir = PC15; //Direction pin  for DRV8825 driver
-        pinStepperStep = PC14; //Step pin for DRV8825 driver
-        pinStepperEnable = PC13; //Enable pin for DRV8825
-        pinDisplayReset = PB2; // OLED reset pin
-        pinFan = PB1; //Pin for the fan output
-        pinFuelPump = PB11; //Fuel pump output
-        pinTachOut = PB10; //Tacho output pin
-        //external interrupt enabled pins
-        pinFlex = PB8; // Flex sensor (Must be external interrupt enabled)
-        pinTrigger = PA10; //The CAS pin
-        pinTrigger2 = PA13; //The Cam Sensor pin
-      
-    #endif
+        resetPins();
+        setPins();
       break;
     default:
       #if defined(STM32F407xx)

@@ -7,7 +7,7 @@ void setupBoard()
 {
   resetPins();
   setPins();
-  //initBoard();
+  configPage2.pinMapping = 60;
 
   STM32_CAN Can0(_CAN1, DEF);
   STM32_CAN Can1(_CAN2, DEF);
@@ -22,7 +22,7 @@ void setupBoard()
   pinMode(LED_COMS, OUTPUT);
   digitalWrite(LED_COMS, LOW);
 
-  SPIClass SPI_for_flash(PB15, PB14, PB13); //SPI1_MOSI, SPI1_MISO, SPI1_SCK
+  SPIClass SPI_for_flash(PIN_SPI_MOSI, PIN_SPI_MISO, PIN_SPI_SCK); //SPI1_MOSI, SPI1_MISO, SPI1_SCK
 
   //windbond W25Q16 SPI flash EEPROM emulation
   EEPROM_Emulation_Config EmulatedEEPROMMconfig{255UL, 4096UL, 31, 0x00100000UL};
@@ -110,7 +110,7 @@ void resetPins()
   pinInjector6 = BOARD_MAX_IO_PINS;
   pinInjector7 = BOARD_MAX_IO_PINS;
   pinInjector8 = BOARD_MAX_IO_PINS;
-  injectorOutputControl = BOARD_MAX_IO_PINS;
+  injectorOutputControl = 0;
   pinCoil1 = BOARD_MAX_IO_PINS;
   pinCoil2 = BOARD_MAX_IO_PINS;
   pinCoil3 = BOARD_MAX_IO_PINS;
@@ -119,7 +119,7 @@ void resetPins()
   pinCoil6 = BOARD_MAX_IO_PINS;
   pinCoil7 = BOARD_MAX_IO_PINS;
   pinCoil8 = BOARD_MAX_IO_PINS;
-  ignitionOutputControl = BOARD_MAX_IO_PINS;
+  ignitionOutputControl = 0;
   pinTrigger = BOARD_MAX_IO_PINS;
   pinTrigger2 = BOARD_MAX_IO_PINS;
   pinTrigger3 = BOARD_MAX_IO_PINS;
@@ -192,17 +192,19 @@ void runLoop()
     digitalWrite(LED_COMS, LOW);
   }
 
+  digitalWrite(LED_ALERT, currentStatus.engineProtectStatus);
+
   if (BIT_CHECK(LOOP_TIMER, BIT_TIMER_1HZ)) //1 hertz
-  {
-    digitalToggle(LED_RUNNING);
+  {  
   }
   if (BIT_CHECK(LOOP_TIMER, BIT_TIMER_4HZ)) //4 hertz
   {
-    digitalToggle(LED_WARNING);
+    digitalToggle(LED_RUNNING);  
+    //digitalToggle(LED_WARNING);
   }
   if (BIT_CHECK(LOOP_TIMER, BIT_TIMER_10HZ)) //10 hertz
   {
-    digitalToggle(LED_ALERT);
+    //digitalToggle(LED_ALERT);
   }
   if (BIT_CHECK(LOOP_TIMER, BIT_TIMER_15HZ)) //15 hertz
   {
