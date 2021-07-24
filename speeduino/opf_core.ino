@@ -29,6 +29,11 @@ void setupBoard()
   Flash_SPI_Config SPIconfig{USE_SPI_EEPROM, SPI_for_flash};
   SPI_EEPROM_Class EEPROM(EmulatedEEPROMMconfig, SPIconfig);
 
+#ifdef USE_I2C_BARO
+  TwoWire dev_i2c(PB11, PB10);
+  LPS25HBSensor lps(&dev_i2c, LPS25HB_ADDRESS_LOW);
+#endif //USE_I2C_BARO
+
   initialiseAll();
   //SPI FLASH
 }
@@ -182,7 +187,6 @@ void resetPins()
 void runLoop()
 {
 
-  
   int recval = -1;
   if ((Serial.available()) > 0)
   {
@@ -196,26 +200,26 @@ void runLoop()
 
   digitalWrite(LED_ALERT, currentStatus.engineProtectStatus);
 
-  dash_generic(Can1);
+  dash_generic(&Can0);
 
   if (BIT_CHECK(LOOP_TIMER, BIT_TIMER_1HZ)) //1 hertz
-  {      
-      #ifdef USE_I2C_BARO
-        float pressure;
-        float temperature;
-        lps.GetPressure(&pressure);
-        lps.GetTemperature(&temperature);
-        currentStatus.fuelTemp = temperature; 
-        currentStatus.baro = pressure / 10.0f; 
-      #endif
-      
-      #ifndef USE_I2C_BARO
-      readBaro(); //Infrequent baro readings are not an issue.
-      #endif   
+  {
+#ifdef USE_I2C_BARO
+    float pressure;
+    float temperature;
+    lps.GetPressure(&pressure);
+    lps.GetTemperature(&temperature);
+    currentStatus.fuelTemp = temperature;
+    currentStatus.baro = pressure / 10.0f;
+#endif
+
+#ifndef USE_I2C_BARO
+    readBaro(); //Infrequent baro readings are not an issue.
+#endif
   }
   if (BIT_CHECK(LOOP_TIMER, BIT_TIMER_4HZ)) //4 hertz
   {
-    digitalToggle(LED_RUNNING);  
+    digitalToggle(LED_RUNNING);
     //digitalToggle(LED_WARNING);
   }
   if (BIT_CHECK(LOOP_TIMER, BIT_TIMER_10HZ)) //10 hertz
@@ -234,17 +238,17 @@ void dash_generic(STM32_CAN *can)
 {
   //BMW iDrive controller
   if (BIT_CHECK(LOOP_TIMER, BIT_TIMER_1HZ))
-  {    
+  {
     outMsg.id = 0x202;
     outMsg.len = 1;
     outMsg.buf[0] = 0xFD;
-    can->write(outMsg);       
+    can->write(outMsg);
 
     outMsg.id = 0x563;
     outMsg.len = 1;
     outMsg.buf[0] = 0x63;
-    can->write(outMsg); 
-    
+    can->write(outMsg);
+
     outMsg.id = 0x273;
     outMsg.len = 8;
     outMsg.buf[0] = 0x1D;
@@ -255,8 +259,7 @@ void dash_generic(STM32_CAN *can)
     outMsg.buf[5] = 0x7F;
     outMsg.buf[6] = 0xDE;
     outMsg.buf[7] = 0x00;
-    can->write(outMsg); 
-    
+    can->write(outMsg);
 
     delay(5);
   }
@@ -273,26 +276,26 @@ void dash_generic(STM32_CAN *can)
     outMsg.buf[5] = lowByte(currentStatus.boostTarget);
     outMsg.buf[6] = highByte(currentStatus.baro);
     outMsg.buf[7] = lowByte(currentStatus.baro);
-    can->write(outMsg); 
-    
+    can->write(outMsg);
+
     outMsg.id = 0x3E0 + 0;
     outMsg.len = 4;
     outMsg.buf[0] = highByte(currentStatus.coolant);
     outMsg.buf[1] = lowByte(currentStatus.coolant);
     outMsg.buf[2] = highByte(currentStatus.IAT);
     outMsg.buf[3] = lowByte(currentStatus.IAT);
-    can->write(outMsg); 
-    
+    can->write(outMsg);
+
     outMsg.id = 0x368 + 1;
     outMsg.len = 2;
     outMsg.buf[0] = highByte(currentStatus.syncLossCounter);
     outMsg.buf[1] = lowByte(currentStatus.syncLossCounter);
-    can->write(outMsg); 
+    can->write(outMsg);
     delay(5);
   }
 
   if (BIT_CHECK(LOOP_TIMER, BIT_TIMER_30HZ))
-  {    
+  {
     outMsg.id = 0x3E8;
     outMsg.len = 8;
     outMsg.buf[0] = 0;
@@ -303,8 +306,7 @@ void dash_generic(STM32_CAN *can)
     outMsg.buf[5] = highByte(currentStatus.MAP - currentStatus.baro);
     outMsg.buf[6] = 0;
     outMsg.buf[7] = 0;
-    can->write(outMsg); 
-
+    can->write(outMsg);
 
     outMsg.id = 0x3E8;
     outMsg.len = 8;
@@ -316,7 +318,7 @@ void dash_generic(STM32_CAN *can)
     outMsg.buf[5] = highByte(currentStatus.TPS * 10);
     outMsg.buf[6] = 0;
     outMsg.buf[7] = 0;
-    can->write(outMsg); 
+    can->write(outMsg);
 
     outMsg.id = 0x3E8;
     outMsg.len = 8;
@@ -328,7 +330,7 @@ void dash_generic(STM32_CAN *can)
     outMsg.buf[5] = highByte(currentStatus.PW1);
     outMsg.buf[6] = lowByte(currentStatus.coolant + 50);
     outMsg.buf[7] = highByte(currentStatus.coolant + 50);
-    can->write(outMsg); 
+    can->write(outMsg);
 
     delay(5);
 
@@ -342,7 +344,7 @@ void dash_generic(STM32_CAN *can)
     outMsg.buf[5] = highByte(currentStatus.battery10 * 10);
     outMsg.buf[6] = 0;
     outMsg.buf[7] = 0;
-    can->write(outMsg); 
+    can->write(outMsg);
 
     outMsg.id = 0x3E8;
     outMsg.len = 8;
@@ -354,8 +356,8 @@ void dash_generic(STM32_CAN *can)
     outMsg.buf[5] = highByte((uint8_t)(currentStatus.O2 * 100 / configPage2.stoich));
     outMsg.buf[6] = 0;
     outMsg.buf[7] = 0;
-    can->write(outMsg); 
-    
+    can->write(outMsg);
+
     outMsg.id = 0x3E8;
     outMsg.len = 8;
     outMsg.buf[0] = 0 + 7;
@@ -366,7 +368,7 @@ void dash_generic(STM32_CAN *can)
     outMsg.buf[5] = 0;
     outMsg.buf[6] = lowByte(currentStatus.fuelPressure * 10);
     outMsg.buf[7] = highByte(currentStatus.fuelPressure * 10);
-    can->write(outMsg); 
+    can->write(outMsg);
 
     delay(5);
 
@@ -380,9 +382,10 @@ void dash_generic(STM32_CAN *can)
     outMsg.buf[5] = highByte(currentStatus.oilPressure * 10);
     outMsg.buf[6] = 0;
     outMsg.buf[7] = 0;
-    can->write(outMsg); 
+    can->write(outMsg);
 
     //
   }
+}
 
 #endif
