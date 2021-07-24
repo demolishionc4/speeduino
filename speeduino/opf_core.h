@@ -4,9 +4,6 @@
 #include "speeduino.h"
 #include <src/STM32_CAN/STM32_CAN.h>
 
-#ifdef USE_I2C_BARO
-#include <src/LPS25HB/LPS25HBSensor.h>
-#endif //USE_I2C_BARO
 
 #define LED_RUNNING PG9
 #define LED_WARNING PG10

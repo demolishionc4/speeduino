@@ -3,6 +3,12 @@
 
 #include "opf_core.h"
 
+#ifdef USE_I2C_BARO
+#include <src/LPS25HB/LPS25HBSensor.h>
+TwoWire dev_i2c(PB11, PB10);
+LPS25HBSensor lps(&dev_i2c, LPS25HB_ADDRESS_LOW);
+#endif //USE_I2C_BARO
+
 void setupBoard()
 {
   resetPins();
@@ -29,10 +35,6 @@ void setupBoard()
   Flash_SPI_Config SPIconfig{USE_SPI_EEPROM, SPI_for_flash};
   SPI_EEPROM_Class EEPROM(EmulatedEEPROMMconfig, SPIconfig);
 
-#ifdef USE_I2C_BARO
-  TwoWire dev_i2c(PB11, PB10);
-  LPS25HBSensor lps(&dev_i2c, LPS25HB_ADDRESS_LOW);
-#endif //USE_I2C_BARO
 
   initialiseAll();
   //SPI FLASH
@@ -204,23 +206,20 @@ void runLoop()
 
   if (BIT_CHECK(LOOP_TIMER, BIT_TIMER_1HZ)) //1 hertz
   {
-#ifdef USE_I2C_BARO
-    float pressure;
-    float temperature;
-    lps.GetPressure(&pressure);
-    lps.GetTemperature(&temperature);
-    currentStatus.fuelTemp = temperature;
-    currentStatus.baro = pressure / 10.0f;
-#endif
 
-#ifndef USE_I2C_BARO
-    readBaro(); //Infrequent baro readings are not an issue.
-#endif
   }
   if (BIT_CHECK(LOOP_TIMER, BIT_TIMER_4HZ)) //4 hertz
   {
     digitalToggle(LED_RUNNING);
-    //digitalToggle(LED_WARNING);
+    
+    #ifdef USE_I2C_BARO
+        float pressure;
+        float temperature;
+        lps.GetPressure(&pressure);
+        lps.GetTemperature(&temperature);
+        currentStatus.fuelTemp = temperature;
+        currentStatus.baro = pressure / 10.0f;
+    #endif
   }
   if (BIT_CHECK(LOOP_TIMER, BIT_TIMER_10HZ)) //10 hertz
   {
