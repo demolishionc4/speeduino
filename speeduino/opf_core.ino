@@ -195,7 +195,19 @@ void runLoop()
   digitalWrite(LED_ALERT, currentStatus.engineProtectStatus);
 
   if (BIT_CHECK(LOOP_TIMER, BIT_TIMER_1HZ)) //1 hertz
-  {  
+  {      
+      #ifdef USE_I2C_BARO
+        float pressure;
+        float temperature;
+        lps.GetPressure(&pressure);
+        lps.GetTemperature(&temperature);
+        currentStatus.fuelTemp = temperature; 
+        currentStatus.baro = pressure / 10.0f; 
+      #endif
+      
+      #ifndef USE_I2C_BARO
+      readBaro(); //Infrequent baro readings are not an issue.
+      #endif   
   }
   if (BIT_CHECK(LOOP_TIMER, BIT_TIMER_4HZ)) //4 hertz
   {
