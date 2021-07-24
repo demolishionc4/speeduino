@@ -31,6 +31,7 @@ void setupBoard();
 void resetPins();
 void setPins();
 void runLoop();
+void dash_generic(STM32_CAN *can)
 
 extern STM32_CAN Can0;
 extern STM32_CAN Can1;
