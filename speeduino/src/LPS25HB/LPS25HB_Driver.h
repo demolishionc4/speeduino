@@ -140,7 +140,16 @@ typedef enum
 
 #define IS_LPS25HB_ODR(ODR) ((ODR == LPS25HB_ODR_ONE_SHOT) || (ODR == LPS25HB_ODR_1HZ) || \
                              (ODR == LPS25HB_ODR_7HZ) || (ODR == LPS25HB_ODR_12_5HZ)|| (ODR == LPS25HB_ODR_25HZ))
+/**
+* @brief  LPS25HB Spi Mode configuration.
+*/
+typedef enum
+{
+  LPS25HB_SPI_4_WIRE   =  (uint8_t)0x00,
+  LPS25HB_SPI_3_WIRE   =  (uint8_t)0x01
+} LPS25HB_SPIMode_et;
 
+#define IS_LPS25HB_SPIMode(MODE) ((MODE == LPS25HB_SPI_4_WIRE) || (MODE == LPS25HB_SPI_3_WIRE))
 
 /**
 * @brief  Block data update.
@@ -290,6 +299,7 @@ typedef struct
   AutoZero;                 /* < Auto zero feature enabled.the actual pressure output is copied in the REF_P*/
   LPS25HB_State_et
   Reset_AZ;                 /*!< Reset the Auto ZeroFunc. The daefualt RPDS value is copied in REF_P   */
+  LPS25HB_SPIMode_et    Sim;                      /*!< SPI Serial Interface Mode selection */
 } LPS25HB_ConfigTypeDef_st;
 
 
@@ -485,6 +495,7 @@ typedef struct
 * 3 DIFF_EN: Interrupt circuit Enable. 0 - interrupt generation disable; 1 - interrupt generation enable
 * 2 BDU: block data update. 0 - continuous update; 1 - output registers not updated until MSB and LSB reading.
 * 1 RESET_AZ: Reset AutoZero Function. Reset Ref_P reg, set pressure to default value in RDPS reg.  0 - disable;1 - Reset
+* 0 SIM: SPI Serial Interface Mode selection. 0 - SPI 4-wire; 1 - SPI 3-wire
 * \endcode
 */
 #define LPS25HB_CTRL_REG1      (uint8_t)0x20
@@ -512,7 +523,7 @@ typedef struct
 * 6 FIFO_EN: FIFO Enable. 0: disable; 1:  enable
 * 5 WTM_EN:  FIFO Watermark level use. 0: disable; 1: enable
 * 4 FIFO_MEAN_DEC: Enable 1 HZ decimation 0: enable; 1: disable
-
+* 3 I2C Enable:  0: I2C Enable; 1: SPI disable????????
 * 2 SWRESET: Software reset. 0: normal mode; 1: SW reset. Self-clearing upon completation
 * 1 AUTO_ZERO: Autozero enable. 0: normal mode; 1: autozero enable.
 * 0 ONE_SHOT: One shot enable. 0: waiting for start of conversion; 1: start for a new dataset
@@ -819,6 +830,17 @@ typedef struct
 */
 #define LPS25HB_RPDS_H_REG        (uint8_t)0x3A
 
+/**
+* @}
+*/
+
+
+/**
+* @}
+*/
+
+
+
 /* Exported Functions -------------------------------------------------------------*/
 /** @defgroup LPS25HB_Exported_Functions
 * @{
@@ -846,6 +868,8 @@ LPS25HB_Error_et LPS25HB_Get_InterruptCircuitEnable(void *handle, LPS25HB_State_
 LPS25HB_Error_et LPS25HB_Set_Bdu(void *handle, LPS25HB_Bdu_et bdu);
 LPS25HB_Error_et LPS25HB_Get_Bdu(void *handle, LPS25HB_Bdu_et* bdu);
 LPS25HB_Error_et LPS25HB_ResetAZ(void *handle);
+LPS25HB_Error_et LPS25HB_Set_SpiInterface(void *handle, LPS25HB_SPIMode_et spimode);
+LPS25HB_Error_et LPS25HB_Get_SpiInterface(void *handle, LPS25HB_SPIMode_et* spimode);
 LPS25HB_Error_et LPS25HB_Set_I2C(void *handle, LPS25HB_State_et i2cstate);
 LPS25HB_Error_et LPS25HB_StartOneShotMeasurement(void *handle);
 LPS25HB_Error_et LPS25HB_Set_AutoZeroFunction(void *handle, LPS25HB_BitStatus_et autozero);

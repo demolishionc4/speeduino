@@ -18,7 +18,6 @@
 #include "idle.h"
 #include "table.h"
 #include "acc_mc33810.h"
-#include "opf_core.h"
 #include BOARD_H //Note that this is not a real file, it is defined in globals.h. 
 #include EEPROM_LIB_H
 #ifdef SD_LOGGING
@@ -328,7 +327,7 @@ void initialiseAll()
     {
       readBaro();
       //EEPROM.update(EEPROM_LAST_BARO, currentStatus.baro);
-      storeLastBaro(currentStatus.baro);
+      //storeLastBaro(currentStatus.baro);
     }
     else
     {

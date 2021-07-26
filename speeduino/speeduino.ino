@@ -367,7 +367,10 @@ void loop()
     if (BIT_CHECK(LOOP_TIMER, BIT_TIMER_1HZ)) //Once per second)
     {
       BIT_CLEAR(TIMER_mask, BIT_TIMER_1HZ);
-      readBaro(); //Infrequent baro readings are not an issue.
+      //Infrequent baro readings are not an issue.
+      #ifndef USE_I2C_BARO
+        readBaro();
+      #endif //USE_I2C_BARO
 
       if ( (configPage10.wmiEnabled > 0) && (configPage10.wmiIndicatorEnabled > 0) )
       {

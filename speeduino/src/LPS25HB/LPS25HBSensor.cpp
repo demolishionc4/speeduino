@@ -49,22 +49,40 @@
  */
 LPS25HBSensor::LPS25HBSensor(TwoWire *i2c, uint8_t address) : dev_i2c(i2c), address(address)
 {
+  dev_spi = NULL;
+}
+
+/** Constructor
+ * @param spi object of an helper class which handles the SPI peripheral
+ * @param cs_pin the chip select pin
+ * @param spi_speed the SPI speed
+ */
+LPS25HBSensor::LPS25HBSensor(SPIClass *spi, int cs_pin, uint32_t spi_speed) : dev_spi(spi), cs_pin(cs_pin), spi_speed(spi_speed)
+{
+  dev_i2c = NULL;
+  address = 0;
 }
 
 /**
  * @brief  Configure the sensor in order to be used
- * @param rate the refresh rate
  * @retval 0 in case of success, an error code otherwise
  */
-LPS25HBStatusTypeDef LPS25HBSensor::begin(uint8_t rate)
+LPS25HBStatusTypeDef LPS25HBSensor::begin(void)
 {
+  if(dev_spi)
+  {
+    // Configure CS pin
+    pinMode(cs_pin, OUTPUT);
+    digitalWrite(cs_pin, HIGH); 
+  }
+
   /* Power down the device */
   if ( LPS25HB_DeActivate( (void *)this ) == LPS25HB_ERROR )
   {
     return LPS25HB_STATUS_ERROR;
   }
 
-  if ( SetODR( rate ) == LPS25HB_STATUS_ERROR )
+  if ( SetODR( 1.0f ) == LPS25HB_STATUS_ERROR )
   {
     return LPS25HB_STATUS_ERROR;
   }
@@ -77,6 +95,12 @@ LPS25HBStatusTypeDef LPS25HBSensor::begin(uint8_t rate)
 
   /* Set block data update mode */
   if ( LPS25HB_Set_Bdu( (void *)this, LPS25HB_BDU_NO_UPDATE ) == LPS25HB_ERROR )
+  {
+    return LPS25HB_STATUS_ERROR;
+  }
+
+  /* Set SPI mode */
+  if ( LPS25HB_Set_SpiInterface( (void *)this, LPS25HB_SPI_4_WIRE ) == LPS25HB_ERROR )
   {
     return LPS25HB_STATUS_ERROR;
   }
@@ -100,6 +124,13 @@ LPS25HBStatusTypeDef LPS25HBSensor::end(void)
   if (Disable() != LPS25HB_STATUS_OK)
   {
     return LPS25HB_STATUS_ERROR;
+  }
+
+  /* Reset CS configuration */
+  if(dev_spi)
+  {
+    // Configure CS pin
+    pinMode(cs_pin, INPUT); 
   }
 
   return LPS25HB_STATUS_OK;
@@ -128,6 +159,27 @@ LPS25HBStatusTypeDef LPS25HBSensor::Disable(void)
 {
   /* Power down the device */
   if ( LPS25HB_DeActivate( (void *)this ) == LPS25HB_ERROR )
+  {
+    return LPS25HB_STATUS_ERROR;
+  }
+
+  return LPS25HB_STATUS_OK;
+}
+
+/**
+ * @brief  Read ID address of LPS25HB
+ * @param  ht_id the pointer where the ID of the device is stored
+ * @retval LPS25HB_STATUS_OK in case of success, an error code otherwise
+ */
+LPS25HBStatusTypeDef LPS25HBSensor::ReadID(uint8_t *p_id)
+{
+  if(!p_id)
+  { 
+    return LPS25HB_STATUS_ERROR;
+  }
+ 
+  /* Read WHO AM I register */
+  if ( LPS25HB_Get_DeviceID( (void *)this, p_id ) == LPS25HB_ERROR )
   {
     return LPS25HB_STATUS_ERROR;
   }
@@ -186,6 +238,45 @@ LPS25HBStatusTypeDef LPS25HBSensor::GetTemperature(float *pfData)
   }
 
   *pfData = ( float )int16data / 10.0f;
+
+  return LPS25HB_STATUS_OK;
+}
+
+/**
+ * @brief  Read LPS25HB output data rate
+ * @param  odr the pointer to the output data rate
+ * @retval LPS25HB_STATUS_OK in case of success, an error code otherwise
+ */
+LPS25HBStatusTypeDef LPS25HBSensor::GetODR(float* odr)
+{
+  LPS25HB_Odr_et odr_low_level;
+
+  if ( LPS25HB_Get_Odr( (void *)this, &odr_low_level ) == LPS25HB_ERROR )
+  {
+    return LPS25HB_STATUS_ERROR;
+  }
+
+  switch( odr_low_level )
+  {
+    case LPS25HB_ODR_ONE_SHOT:
+      *odr =  0.0f;
+      break;
+    case LPS25HB_ODR_1HZ:
+      *odr =  1.0f;
+      break;
+    case LPS25HB_ODR_7HZ:
+      *odr =  7.0f;
+      break;
+    case LPS25HB_ODR_12_5HZ:
+      *odr = 12.5f;
+      break;
+    case LPS25HB_ODR_25HZ:
+      *odr = 25.0f;
+      break;
+    default:
+      *odr = -1.0f;
+      return LPS25HB_STATUS_ERROR;
+  }
 
   return LPS25HB_STATUS_OK;
 }

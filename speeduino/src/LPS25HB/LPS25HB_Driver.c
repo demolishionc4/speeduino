@@ -77,7 +77,7 @@ extern uint8_t LPS25HB_IO_Read( void *handle, uint8_t ReadAddr, uint8_t *pBuffer
 /*******************************************************************************
 * Function Name   : LPS25HB_ReadReg
 * Description   : Generic Reading function. It must be fullfilled with either
-*         : I2C  reading functions
+*         : I2C or SPI reading functions
 * Input       : Register Address
 * Output      : Data Read
 * Return      : None
@@ -96,7 +96,7 @@ LPS25HB_Error_et LPS25HB_ReadReg( void *handle, uint8_t RegAddr, uint16_t NumByt
 /*******************************************************************************
 * Function Name   : LPS25HB_WriteReg
 * Description   : Generic Writing function. It must be fullfilled with either
-*         : I2C  writing function
+*         : I2C or SPI writing function
 * Input       : Register Address, Data to be written
 * Output      : None
 * Return      : None
@@ -360,7 +360,7 @@ LPS25HB_Error_et LPS25HB_Set_PowerDownMode(void *handle, LPS25HB_BitStatus_et pd
 
 /**
 * @brief  Set Block Data Mode
-* @detail It is recommended to set BDU bit to ï¿½1ï¿½.
+* @detail It is recommended to set BDU bit to ‘1’.
 * @detail This feature avoids reading LSB and MSB related to different samples.
 * @param  *handle Device handle.
 * @param  LPS25HB_BDU_CONTINUOS_UPDATE, LPS25HB_BDU_NO_UPDATE
@@ -470,6 +470,49 @@ LPS25HB_Error_et LPS25HB_ResetAZ(void *handle)
 }
 
 /**
+* @brief  Set SPI mode: 3 Wire Interface or 4 Wire Interface
+* @param  *handle Device handle.
+* @param  LPS25HB_SPI_3_WIRE, LPS25HB_SPI_4_WIRE
+* @retval Status [LPS25HB_ERROR, LPS25HB_OK]
+*/
+LPS25HB_Error_et LPS25HB_Set_SpiInterface(void *handle, LPS25HB_SPIMode_et spimode)
+{
+  uint8_t tmp;
+
+  LPS25HB_assert_param(IS_LPS25HB_SPIMode(spimode));
+
+  if(LPS25HB_ReadReg(handle, LPS25HB_CTRL_REG1, 1, &tmp))
+    return LPS25HB_ERROR;
+
+  tmp &= ~LPS25HB_SIM_MASK;
+  tmp |= (uint8_t)spimode;
+
+  if(LPS25HB_WriteReg(handle, LPS25HB_CTRL_REG1, 1, &tmp))
+    return LPS25HB_ERROR;
+
+  return LPS25HB_OK;
+}
+
+
+/**
+* @brief  Get SPI mode: 3 Wire Interface or 4 Wire Interface
+* @param  *handle Device handle.
+* @param  Buffet to empty with spi mode read from Sensor
+* @retval Status [LPS25HB_ERROR, LPS25HB_OK]
+*/
+LPS25HB_Error_et LPS25HB_Get_SpiInterface(void *handle, LPS25HB_SPIMode_et* spimode)
+{
+  uint8_t tmp;
+
+  if(LPS25HB_ReadReg(handle, LPS25HB_CTRL_REG1, 1, &tmp))
+    return LPS25HB_ERROR;
+
+  *spimode = (LPS25HB_SPIMode_et)(tmp & LPS25HB_SIM_MASK);
+
+  return LPS25HB_OK;
+}
+
+/**
 * @brief  Enable/Disable I2C Mode
 * @param  *handle Device handle.
 * @param  State: Enable (reset bit)/ Disable (set bit)
@@ -524,7 +567,7 @@ LPS25HB_Error_et LPS25HB_StartOneShotMeasurement(void *handle)
 
 /**
 * @brief  Set AutoZero Function bit
-* @detail When set to ï¿½1ï¿½, the actual pressure output is copied in the REF_P reg (@0x08..0A)
+* @detail When set to ‘1’, the actual pressure output is copied in the REF_P reg (@0x08..0A)
 * @param  *handle Device handle.
 * @param  LPS25HB_SET/LPS25HB_RESET
 * @retval Status [LPS25HB_ERROR, LPS25HB_OK]
@@ -590,8 +633,8 @@ LPS25HB_Error_et LPS25HB_MemoryBoot(void *handle)
 
 /**
 * @brief   Software Reset ann Reboot Memory Content.
-* @detail  The device is reset to the power on configuration if the SWRESET bit is set to ï¿½1ï¿½
-and BOOT is set to ï¿½1ï¿½; Self-clearing upon completion.
+* @detail  The device is reset to the power on configuration if the SWRESET bit is set to ‘1’
+and BOOT is set to ‘1’; Self-clearing upon completion.
 * @param  *handle Device handle.
 * @retval  Status [LPS25HB_ERROR, LPS25HB_OK]
 */
@@ -879,7 +922,7 @@ LPS25HB_Error_et LPS25HB_Get_DataStatus(void *handle, LPS25HB_DataStatus_st* dat
 
 /**
 * @brief    Get the raw pressure tmp
-* @detail   The data are expressed as PRESS_OUT_H/_L/_XL in 2ï¿½s complement.
+* @detail   The data are expressed as PRESS_OUT_H/_L/_XL in 2’s complement.
 Pout(hPA)=PRESS_OUT / 4096
 * @param  *handle Device handle.
 * @param  The buffer to fill with the pressure raw tmp
@@ -909,7 +952,7 @@ LPS25HB_Error_et LPS25HB_Get_RawPressure(void *handle, int32_t *raw_press)
 
 /**
 * @brief    Get the Pressure value in hPA.
-* @detail   The data are expressed as PRESS_OUT_H/_L/_XL in 2ï¿½s complement.
+* @detail   The data are expressed as PRESS_OUT_H/_L/_XL in 2’s complement.
 Pout(hPA)=PRESS_OUT / 4096
 * @param  *handle Device handle.
 * @param  The buffer to fill with the pressure value that must be divided by 100 to get the value in hPA
@@ -929,7 +972,7 @@ LPS25HB_Error_et LPS25HB_Get_Pressure(void *handle, int32_t* Pout)
 
 /**
 * @brief    Get the Raw Temperature tmp.
-* @detail   Temperature data are expressed as TEMP_OUT_H&TEMP_OUT_L as 2ï¿½s complement number.
+* @detail   Temperature data are expressed as TEMP_OUT_H&TEMP_OUT_L as 2’s complement number.
 Tout(degC)=42.5+ (TEMP_OUT/480)
 * @param  *handle Device handle.
 * @param  Buffer to empty with the temperature raw tmp.
@@ -953,11 +996,11 @@ LPS25HB_Error_et LPS25HB_Get_RawTemperature(void *handle, int16_t* raw_data)
 
 
 /**
-* @brief    Get the Temperature value in ï¿½C.
-* @detail   Temperature data are expressed as TEMP_OUT_H&TEMP_OUT_L as 2ï¿½s complement number.
+* @brief    Get the Temperature value in °C.
+* @detail   Temperature data are expressed as TEMP_OUT_H&TEMP_OUT_L as 2’s complement number.
 * Tout(degC)=42.5+ (TEMP_OUT/480)
 * @param  *handle Device handle.
-* @param  Buffer to fill with the temperature value that must be divided by 10 to get the value in ï¿½C
+* @param  Buffer to fill with the temperature value that must be divided by 10 to get the value in °C
 * @retval   Status [LPS25HB_ERROR, LPS25HB_OK]
 */
 LPS25HB_Error_et LPS25HB_Get_Temperature(void *handle, int16_t* Tout)
@@ -1215,13 +1258,19 @@ LPS25HB_Error_et LPS25HB_Set_GenericConfig(void *handle, LPS25HB_ConfigTypeDef_s
     return LPS25HB_ERROR;
 
   /*Step 4. BDU bit is used to inhibit the output registers update between the reading of upper and
-  lower register parts. In default mode (BDU = ï¿½0ï¿½), the lower and upper register parts are
+  lower register parts. In default mode (BDU = ‘0’), the lower and upper register parts are
   updated continuously. If it is not sure to read faster than output data rate, it is recommended
-  to set BDU bit to ï¿½1ï¿½. In this way, after the reading of the lower (upper) register part, the
+  to set BDU bit to ‘1’. In this way, after the reading of the lower (upper) register part, the
   content of that output registers is not updated until the upper (lower) part is read too.
   This feature avoids reading LSB and MSB related to different samples.*/
 
   if(LPS25HB_Set_Bdu(handle, pxLPS25HBInit->BDU))
+    return LPS25HB_ERROR;
+
+  /*Step 5. SIM bit selects the SPI serial interface mode.*/
+  /* This feature has effect only if SPI interface is used*/
+
+  if(LPS25HB_Set_SpiInterface(handle, pxLPS25HBInit->Sim))
     return LPS25HB_ERROR;
 
   return LPS25HB_OK;
@@ -1252,6 +1301,7 @@ LPS25HB_Error_et LPS25HB_Get_GenericConfig(void *handle, LPS25HB_ConfigTypeDef_s
   pxLPS25HBInit->OutputDataRate = (LPS25HB_Odr_et)(tmp & LPS25HB_ODR_MASK);
 
   pxLPS25HBInit->BDU = (LPS25HB_Bdu_et)(tmp & LPS25HB_BDU_MASK);
+  pxLPS25HBInit->Sim = (LPS25HB_SPIMode_et)(tmp & LPS25HB_SIM_MASK);
 
   if(LPS25HB_ReadReg(handle, LPS25HB_CTRL_REG2, 1, &tmp))
     return LPS25HB_ERROR;
