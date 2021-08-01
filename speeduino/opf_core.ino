@@ -102,7 +102,7 @@ void setPins()
   pinO2 = PC1;   //ADC12 LED_BUILTIN_2
   pinO2_2 = PC2; //ADC12 LED_BUILTIN_2
   //pinBaro = PC5; //ADC12
-  pinMAP = PC5;
+  pinMAP = PA5;
   pinOilPressure = PB1;  //(DO NOT USE FOR SPEEDUINO) ADC123 - SPI FLASH CHIP CS pin
   pinFuelPressure = PB0; //ADC12
 
@@ -249,7 +249,7 @@ void runLoop()
     float temperature;
     LPS_Sensor.GetPressure(&pressure);
     LPS_Sensor.GetTemperature(&temperature);
-    currentStatus.syncLossCounter = temperature;
+    currentStatus.fuelTemp = temperature;
     currentStatus.baro = pressure / 10.0f;
 #endif
 
