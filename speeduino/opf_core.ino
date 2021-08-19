@@ -33,42 +33,42 @@ void setupBoard()
   digitalWrite(LED_ALERT, LOW);
   pinMode(LED_COMS, OUTPUT);
   digitalWrite(LED_COMS, LOW);
-#ifdef USE_SPI_EEPROM
-  SPIClass SPI_for_flash(PIN_SPI_MOSI, PIN_SPI_MISO, PIN_SPI_SCK); //SPI1_MOSI, SPI1_MISO, SPI1_SCK
+  #ifdef USE_SPI_EEPROM
+    SPIClass SPI_for_flash(PIN_SPI_MOSI, PIN_SPI_MISO, PIN_SPI_SCK); //SPI1_MOSI, SPI1_MISO, SPI1_SCK
 
-  //windbond W25Q16 SPI flash EEPROM emulation
-  EEPROM_Emulation_Config EmulatedEEPROMMconfig{255UL, 16384UL, 31, 0x00100000UL};
-  Flash_SPI_Config SPIconfig{USE_SPI_EEPROM, SPI_for_flash};
-  SPI_EEPROM_Class EEPROM(EmulatedEEPROMMconfig, SPIconfig);
-#endif
-#ifdef USE_I2C_BARO
-  LPS_dev.begin();
-  LPS_Sensor.begin();
-  LPS_Sensor.SetODR(7.0f);
-  LPS_Sensor.Enable();
-#endif //USE_I2C_BARO
+    //windbond W25Q16 SPI flash EEPROM emulation
+    EEPROM_Emulation_Config EmulatedEEPROMMconfig{255UL, 16384UL, 31, 0x00100000UL};
+    Flash_SPI_Config SPIconfig{USE_SPI_EEPROM, SPI_for_flash};
+    SPI_EEPROM_Class EEPROM(EmulatedEEPROMMconfig, SPIconfig);
+  #endif
+  #ifdef USE_I2C_BARO
+    LPS_dev.begin();
+    LPS_Sensor.begin();
+    LPS_Sensor.SetODR(7.0f);
+    LPS_Sensor.Enable();
+  #endif //USE_I2C_BARO
 
-#ifdef USE_DBW_IFX9201
-  Timer10.setMode(1, TIMER_OUTPUT_COMPARE_PWM1, DIS_PIN);  //DBW PWM output fixed to PB8/
-  Timer10.setOverflow(20000, HERTZ_FORMAT);
-  Timer10.setCaptureCompare(1, 0, RESOLUTION_12B_COMPARE_FORMAT);
-  Timer10.resume();
-  //IFX9201_HBridge.begin( DIR_PIN, STP_PIN, DIS_PIN );
+  #ifdef USE_DBW_IFX9201
+    Timer10.setMode(1, TIMER_OUTPUT_COMPARE_PWM1, DIS_PIN);  //DBW PWM output fixed to PB8/
+    Timer10.setOverflow(20000, HERTZ_FORMAT);
+    Timer10.setCaptureCompare(1, 0, RESOLUTION_12B_COMPARE_FORMAT);
+    Timer10.resume();
+    //IFX9201_HBridge.begin( DIR_PIN, STP_PIN, DIS_PIN );
 
-  //IFX9201_HBridge.forwards( 50 );       // Same as forwards( )
-  //IFX9201_HBridge.stop( );
-  //IFX9201_HBridge.backwards( 50 );
-  //IFX9201_HBridge.stop( );
+    //IFX9201_HBridge.forwards( 50 );       // Same as forwards( )
+    //IFX9201_HBridge.stop( );
+    //IFX9201_HBridge.backwards( 50 );
+    //IFX9201_HBridge.stop( );
 
-  // TIM_TypeDef *Instance = (TIM_TypeDef *)pinmap_peripheral(digitalPinToPinName(DIS_PIN), PinMap_PWM);
-  // uint32_t channel = STM_PIN_CHANNEL(pinmap_function(digitalPinToPinName(DIS_PIN), PinMap_PWM));
-  //Timer10->setPWM(channel, DIS_PIN, 10, 50, dbwScheduleInterrupt);
+    // TIM_TypeDef *Instance = (TIM_TypeDef *)pinmap_peripheral(digitalPinToPinName(DIS_PIN), PinMap_PWM);
+    // uint32_t channel = STM_PIN_CHANNEL(pinmap_function(digitalPinToPinName(DIS_PIN), PinMap_PWM));
+    //Timer10->setPWM(channel, DIS_PIN, 10, 50, dbwScheduleInterrupt);
 
-  //DBWMotor.begin();
-  //DBWMotor.setSpeed(100);
-#endif //USE_DBW_IFX9201
+    //DBWMotor.begin();
+    //DBWMotor.setSpeed(100);
+  #endif //USE_DBW_IFX9201
+
   initialiseAll();
-  //SPI FLASH
 }
 
 #ifdef USE_DBW_IFX9201
