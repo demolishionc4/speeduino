@@ -340,7 +340,7 @@ void initialiseAll()
       {
         currentStatus.baro = currentStatus.MAP;
         //EEPROM.update(EEPROM_LAST_BARO, currentStatus.baro);
-        storeLastBaro(currentStatus.baro);
+        //storeLastBaro(currentStatus.baro);
       }
       else
       {

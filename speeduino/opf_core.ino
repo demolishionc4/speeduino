@@ -40,6 +40,8 @@ void setupBoard()
     EEPROM_Emulation_Config EmulatedEEPROMMconfig{255UL, 16384UL, 31, 0x00100000UL};
     Flash_SPI_Config SPIconfig{USE_SPI_EEPROM, SPI_for_flash};
     SPI_EEPROM_Class EEPROM(EmulatedEEPROMMconfig, SPIconfig);
+    EEPROM.begin(SPI_for_flash, PIN_SPI_SS);
+    //EEPROM.clear();
   #endif
   #ifdef USE_I2C_BARO
     LPS_dev.begin();
@@ -69,6 +71,7 @@ void setupBoard()
   #endif //USE_DBW_IFX9201
 
   initialiseAll();
+  //loadCalibration();
 }
 
 #ifdef USE_DBW_IFX9201
@@ -101,7 +104,7 @@ void setPins()
   pinIAT = PA4;  //ADC12 LED_BUILTIN_1
   pinO2 = PC1;   //ADC12 LED_BUILTIN_2
   pinO2_2 = PC2; //ADC12 LED_BUILTIN_2
-  //pinBaro = PC5; //ADC12
+  pinBaro = PC5; //ADC12
   pinMAP = PA5;
   pinOilPressure = PB1;  //(DO NOT USE FOR SPEEDUINO) ADC123 - SPI FLASH CHIP CS pin
   pinFuelPressure = PB0; //ADC12
@@ -145,6 +148,7 @@ void setPins()
   pinFuelPump = PG6;    //Fuel pump output
   pinFan = PG7;         //Pin for the fan output (Goes to ULN2803)
 }
+
 void resetPins()
 {
   pinInjector1 = BOARD_MAX_IO_PINS;
