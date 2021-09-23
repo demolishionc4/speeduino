@@ -8,7 +8,7 @@
 #define USE_I2C_BARO
 //#define USE_DBW_IFX9201
 #define USE_CAN_DASH
-#define USE_SPI_EEPROM PB12
+//#define USE_SPI_EEPROM PB12
 
 #ifdef USE_SPI_EEPROM
 #define PIN_SPI_SS PB12   // W25Q16 (on board flash)
