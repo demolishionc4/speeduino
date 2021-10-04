@@ -8,17 +8,18 @@
 #define USE_I2C_BARO
 //#define USE_DBW_IFX9201
 #define USE_CAN_DASH
-//#define USE_SPI_EEPROM PB12
+#define USE_SPI_EEPROM PD6
 
 #ifdef USE_SPI_EEPROM
-#define PIN_SPI_SS PB12   // W25Q16 (on board flash)
+#define PIN_SPI_SS PD6   // W25Q16 (on board flash)
 #define PIN_SPI_MOSI PB15 // W25Q16 (on board flash)
 #define PIN_SPI_MISO PB14 // W25Q16 (on board flash)
 #define PIN_SPI_SCK PB13  // W25Q16 (on board flash)
 #endif //USE_SPI_EEPROM
 
 #ifdef USE_I2C_BARO
-#include <src/LPS25HB/LPS25HBSensor.h>
+#include <src/LPS22HH/LPS22HHSensor.h>
+//#include <src/LPS25HB/LPS25HBSensor.h>
 #endif //USE_I2C_BARO
 
 #ifdef USE_DBW_IFX9201

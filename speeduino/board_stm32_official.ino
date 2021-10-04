@@ -16,7 +16,8 @@ STM32_CAN Can0 (_CAN1,DEF);
     BackupSramAsEEPROM EEPROM;
 #elif defined(USE_SPI_EEPROM)
     #if defined(STM32F407xx)
-      SPIClass SPI_for_flash(PB5, PB4, PB3); //SPI1_MOSI, SPI1_MISO, SPI1_SCK
+      SPIClass SPI_for_flash(PB15, PB14, PB13);
+      //SPIClass SPI_for_flash(PB5, PB4, PB3); //SPI1_MOSI, SPI1_MISO, SPI1_SCK
     #else //Blue/Black Pills
       SPIClass SPI_for_flash(PB15, PB14, PB13);
     #endif
