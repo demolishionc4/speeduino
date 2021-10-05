@@ -11,7 +11,7 @@
 #define USE_SPI_EEPROM PD6
 
 #ifdef USE_SPI_EEPROM
-#define PIN_SPI_SS PD6   // W25Q16 (on board flash)
+#define PIN_SPI_SS USE_SPI_EEPROM   // W25Q16 (on board flash)
 #define PIN_SPI_MOSI PB15 // W25Q16 (on board flash)
 #define PIN_SPI_MISO PB14 // W25Q16 (on board flash)
 #define PIN_SPI_SCK PB13  // W25Q16 (on board flash)
