@@ -27,6 +27,7 @@
 #define DIR_PIN PB9
 #define STP_PIN PB7
 #define DIS_PIN PB8_ALT1
+extern HardwareTimer Timer10;
 #endif //USE_DBW_IFX9201
 
 
@@ -44,7 +45,6 @@
 
 extern STM32_CAN Can0;
 extern STM32_CAN Can1;
-extern HardwareTimer Timer10;
 
 void setupBoard();
 void resetPins();
