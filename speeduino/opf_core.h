@@ -5,9 +5,9 @@
 #include <src/STM32_CAN/STM32_CAN.h>
 
 
-//#define USE_I2C_BARO
+#define USE_I2C_BARO
 //#define USE_DBW_IFX9201
-//#define USE_CAN_DASH
+#define USE_CAN_DASH
 //#define USE_SPI_EEPROM PB12
 
 #ifdef USE_SPI_EEPROM
@@ -26,6 +26,7 @@
 #define DIR_PIN PB9
 #define STP_PIN PB7
 #define DIS_PIN PB8_ALT1
+extern HardwareTimer Timer10;
 #endif //USE_DBW_IFX9201
 
 
@@ -43,7 +44,6 @@
 
 extern STM32_CAN Can0;
 extern STM32_CAN Can1;
-extern HardwareTimer Timer10;
 
 void setupBoard();
 void resetPins();
