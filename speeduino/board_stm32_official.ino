@@ -10,6 +10,7 @@
 #define NATIVE_CAN_AVAILABLE
 //This activates CAN1 interface on STM32, but it's named as Can0, because that's how Teensy implementation is done
 STM32_CAN Can0 (_CAN1,DEF);
+STM32_CAN Can1(_CAN2, DEF);
 #endif
 
 #if defined(SRAM_AS_EEPROM)
