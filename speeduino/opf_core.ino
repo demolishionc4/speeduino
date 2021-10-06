@@ -96,7 +96,6 @@ void setPins()
   //******************************************
   //******** ANALOG CONNECTIONS ***************
   //******************************************
-  //ADC1 = STM_PIN_DATA_EXT(STM_MODE_ANALOG, GPIO_NOPULL, 0, 6, 0)
 
   pinBat = PA0;  //A12
   pinCLT = PA3;  //A7
