@@ -34,14 +34,8 @@ void setupBoard()
   pinMode(LED_COMS, OUTPUT);
   digitalWrite(LED_COMS, LOW);
   #ifdef USE_SPI_EEPROM
-    SPIClass SPI_for_flash(PIN_SPI_MOSI, PIN_SPI_MISO, PIN_SPI_SCK); //SPI1_MOSI, SPI1_MISO, SPI1_SCK
-
-    //windbond W25Q16 SPI flash EEPROM emulation
-    EEPROM_Emulation_Config EmulatedEEPROMMconfig{255UL, 16384UL, 31, 0x00100000UL};
-    Flash_SPI_Config SPIconfig{USE_SPI_EEPROM, SPI_for_flash};
-    SPI_EEPROM_Class EEPROM(EmulatedEEPROMMconfig, SPIconfig);
     EEPROM.begin(SPI_for_flash, PIN_SPI_SS);
-    //EEPROM.clear();
+    EEPROM.clear();
   #endif
   #ifdef USE_I2C_BARO
     LPS_dev.begin();
@@ -112,8 +106,8 @@ void setPins()
   pinO2_2 = PC2; //A14
   pinBaro = PC5; //A1
   pinMAP = PA5;   //A5
-  pinOilPressure = PB1;  //A0
-  pinFuelPressure = PB0; //A2
+  pinOilPressure = PA7;  //A0
+  pinFuelPressure = PC4; //A2
 
   //******************************************
   //******** INJECTOR CONNECTIONS ***************
@@ -153,6 +147,7 @@ void setPins()
   pinStepperStep = PG5; //15
   pinFuelPump = PG6;    //16
   pinFan = PG7;         //17
+  pinLaunch = PF5;      
 }
 
 void resetPins()
@@ -254,14 +249,6 @@ void runLoop()
   #endif
   if (BIT_CHECK(LOOP_TIMER, BIT_TIMER_1HZ)) //1 hertz
   {
-    #ifdef USE_I2C_BARO
-        float pressure;
-        float temperature;
-        LPS_Sensor.GetPressure(&pressure);
-        LPS_Sensor.GetTemperature(&temperature);
-        currentStatus.fuelTemp = temperature;
-        currentStatus.baro = pressure / 10.0f;
-    #endif
 
     //DBWMotor.move_revolution(4);
   }
@@ -271,6 +258,14 @@ void runLoop()
   if (BIT_CHECK(LOOP_TIMER, BIT_TIMER_10HZ)) //10 hertz
   {
     digitalToggle(LED_RUNNING);
+    #ifdef USE_I2C_BARO
+        float pressure;
+        float temperature;
+        LPS_Sensor.GetPressure(&pressure);
+        LPS_Sensor.GetTemperature(&temperature);
+        currentStatus.fuelTemp = temperature;
+        currentStatus.baro = pressure / 10.0f;
+    #endif
   }
   if (BIT_CHECK(LOOP_TIMER, BIT_TIMER_15HZ)) //15 hertz
   {
