@@ -134,7 +134,7 @@ void command()
           TS_CommandButtonsHandler(cmdCombined);
           cmdPending = false;
         }
-        else if( (cmdCombined >= TS_CMD_STM32_REBOOT) && (cmdCombined <= TS_CMD_STM32_BOOTLOADER) )
+        else if( (cmdCombined >= TS_CMD_STM32_REBOOT) && (cmdCombined <= TS_CMD_STM32_CLEARFLASH) )
         {
           //STM32 DFU mode button
           TS_CommandButtonsHandler(cmdCombined);

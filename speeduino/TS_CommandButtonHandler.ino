@@ -355,6 +355,13 @@ void TS_CommandButtonsHandler(uint16_t buttonCommand)
       jumpToBootloader();
       break;
 
+    case TS_CMD_STM32_CLEARFLASH: //
+      doClearFlash();
+      break;
+
+    
+  
+
     default:
       break;
   }
