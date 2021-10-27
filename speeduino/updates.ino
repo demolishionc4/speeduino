@@ -397,7 +397,7 @@ void doUpdates()
     configPage10.oilPressureProtEnbl = false;
     configPage10.oilPressureEnable = false;
     configPage10.fuelPressureEnable = false;
-
+    
     //wmi
     configPage10.wmiEnabled = 0;
     configPage10.wmiMode = 0;

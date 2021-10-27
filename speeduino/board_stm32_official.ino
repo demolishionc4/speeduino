@@ -17,7 +17,7 @@ STM32_CAN Can1(_CAN2, DEF);
     BackupSramAsEEPROM EEPROM;
 #elif defined(USE_SPI_EEPROM)
     #if defined(STM32F407xx)
-      SPIClass SPI_for_flash(PB15, PB14, PB13);
+      SPIClass SPI_for_flash(PIN_SPI_MOSI, PIN_SPI_MISO, PIN_SPI_SCK);
       //SPIClass SPI_for_flash(PB5, PB4, PB3); //SPI1_MOSI, SPI1_MISO, SPI1_SCK
     #else //Blue/Black Pills
       SPIClass SPI_for_flash(PB15, PB14, PB13);
@@ -342,6 +342,15 @@ STM32RTC& rtc = STM32RTC::getInstance();
     );
     __builtin_unreachable();
     #endif
+  }
+
+  void doClearFlash( void ) 
+  {
+    digitalWrite(LED_WARNING, HIGH);
+    EEPROM.read(0); 
+    EEPROM.clear();
+    digitalWrite(LED_WARNING, LOW);
+    doSystemReset();
   }
 
   /*

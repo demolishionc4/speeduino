@@ -35,7 +35,6 @@ void setupBoard()
   digitalWrite(LED_COMS, LOW);
   #ifdef USE_SPI_EEPROM
     EEPROM.begin(SPI_for_flash, PIN_SPI_SS);
-    EEPROM.clear();
   #endif
   #ifdef USE_I2C_BARO
     LPS_dev.begin();
@@ -96,6 +95,7 @@ void setPins()
   //******************************************
   //******** ANALOG CONNECTIONS ***************
   //******************************************
+  //ADC1 = STM_PIN_DATA_EXT(STM_MODE_ANALOG, GPIO_NOPULL, 0, 6, 0)
 
   pinBat = PA0;  //A12
   pinCLT = PA3;  //A7

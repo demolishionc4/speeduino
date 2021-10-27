@@ -43,6 +43,7 @@ void initBoard();
 uint16_t freeRam();
 void doSystemReset();
 void jumpToBootloader();
+void doClearFlash();
 extern "C" char* sbrk(int incr);
 
 #if defined(ARDUINO_BLUEPILL_F103C8) || defined(ARDUINO_BLUEPILL_F103CB) \
