@@ -99,7 +99,7 @@ void setPins()
 
   pinBat = PA0;  //A12
   pinCLT = PA3;  //A7
-  pinTPS = PA1;  //A9
+  pinTPS = PA2;  //A9
   pinIAT = PA4;  //A8
   pinO2 = PC1;   //A13
   pinO2_2 = PC2; //A14
