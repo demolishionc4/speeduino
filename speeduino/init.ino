@@ -1985,39 +1985,50 @@ void setPinMapping(byte boardID)
     #if defined(CORE_TEENSY35)
     case 50:
       //Pin mappings as per the teensy rev A shield
-      pinInjector1 = 2; //Output pin injector 1 is on
-      pinInjector2 = 10; //Output pin injector 2 is on
-      pinInjector3 = 6; //Output pin injector 3 is on
-      pinInjector4 = 9; //Output pin injector 4 is on
+      pinInjector1 = 8; //Output pin injector 1 is on
+      pinInjector2 = 9; //Output pin injector 2 is on
+      pinInjector3 = 5; //Output pin injector 3 is on
+      pinInjector4 = 2; //Output pin injector 4 is on
+      pinInjector5 = 12; //Output pin injector 5 is on
+      pinInjector6 = 27; //Output pin injector 6 is on
+      pinInjector7 = 24; //Output pin injector 7 is on
+      pinInjector8 = 25; //Output pin injector 8 is on
       //Placeholder only - NOT USED:
       //pinInjector5 = 13;
       pinCoil1 = 29; //Pin for coil 1
       pinCoil2 = 30; //Pin for coil 2
-      pinCoil3 = 31; //Pin for coil 3 - ONLY WITH DB2
-      pinCoil4 = 32; //Pin for coil 4 - ONLY WITH DB2
+      pinCoil3 = 31; //Pin for coil 3
+      pinCoil4 = 32; //Pin for coil 4
+      pinCoil5 = 28; //Pin for coil 5
+      pinCoil6 = 14; //Pin for coil 6
+      pinCoil7 = 39; //Pin for coil 7
+      pinCoil8 = 22; //Pin for coil 8
       //Placeholder only - NOT USED:
       //pinCoil5 = 46; 
       pinTrigger = 23; //The CAS pin
       pinTrigger2 = 36; //The Cam Sensor pin
-      pinTPS = 16; //TPS input pin
-      pinMAP = 17; //MAP sensor pin
-      pinIAT = 14; //IAT sensor pin
-      pinCLT = 15; //CLT sensor pin
+      pinTPS = A2; //TPS input pin
+      pinMAP = A3; //MAP sensor pin
+      pinIAT = A11; //IAT sensor pin
+      pinCLT = A10; //CLT sensor pin
       pinO2 = A22; //O2 sensor pin
       pinO2_2 = A21; //O2 sensor pin (second sensor)
-      pinBat = 18; //Battery reference voltage pin
-      pinTachOut = 20; //Tacho output pin
-      pinIdle1 = 5; //Single wire idle control
+      pinBat = A1; //Battery reference voltage pin
+      pinOilPressure = A24; //Oil Pressure
+      pinTachOut = 21; //Tacho output pin
+      pinIdle1 = 10; //Single wire idle control
       pinBoost = 11; //Boost control
       pinFuelPump = 38; //Fuel pump output
-      pinStepperDir = 34; //Direction pin for DRV8825 driver
+      pinStepperDir = 13; //Direction pin for DRV8825 driver
       pinStepperStep = 35; //Step pin for DRV8825 driver
-      pinStepperEnable = 33; //Enable pin for DRV8825 driver
+      //pinStepperEnable = 33; //Enable pin for DRV8825 driver
       pinLaunch = 26; //Can be overwritten below
       pinFan = 37; //Pin for the fan output - ONLY WITH DB
-      pinSpareHOut1 = 8; // high current output spare1
+      pinSpareHOut1 = 6; // high current output spare1
       pinSpareHOut2 = 7; // high current output spare2
-      pinSpareLOut1 = 21; //low current output spare1
+      pinSpareLOut1 = 20; //low current output spare1
+      
+      pinVSS = 52; //VSS input
       break;
 
     case 51:
