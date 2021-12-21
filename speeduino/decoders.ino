@@ -55,7 +55,6 @@ volatile unsigned long curTime3;
 volatile unsigned long curGap3;
 volatile unsigned long lastGap;
 volatile unsigned long targetGap;
-volatile unsigned long compositeLastToothTime;
 
 unsigned long MAX_STALL_TIME = 500000UL; //The maximum time (in uS) that the system will continue to function before the engine is considered stalled/stopped. This is unique to each decoder, depending on the number of teeth etc. 500000 (half a second) is used as the default value, most decoders will be much less.
 volatile uint16_t toothCurrentCount = 0; //The current number of teeth (Onec sync has been achieved, this can never actually be 0
@@ -144,26 +143,15 @@ static inline void addToothLogEntry(unsigned long toothTime, bool whichTooth)
       if(whichTooth == TOOTH_CAM) { BIT_SET(compositeLogHistory[toothHistoryIndex], COMPOSITE_LOG_TRIG); }
       if(currentStatus.hasSync == true) { BIT_SET(compositeLogHistory[toothHistoryIndex], COMPOSITE_LOG_SYNC); }
 
-      toothHistory[toothHistoryIndex] = micros() - compositeLastToothTime;
-      compositeLastToothTime = micros();
+      toothHistory[toothHistoryIndex] = micros();
       valueLogged = true;
     }
 
     //If there has been a value logged above, update the indexes
     if(valueLogged == true)
     {
-      if(toothHistoryIndex == (TOOTH_LOG_BUFFER-1)) { toothHistoryIndex = 0; }
-      else { toothHistoryIndex++; }
-
-      uint16_t absoluteToothHistoryIndex = toothHistoryIndex;
-      if(toothHistoryIndex < toothHistorySerialIndex)
-      {
-        //If the main history index is lower than the serial index, it means that this has looped. To calculate the delta between the two indexes, add the buffer size back on 
-        absoluteToothHistoryIndex += TOOTH_LOG_BUFFER;
-      }
-      //Check whether the current index is ahead of the serial index by at least the size of the log
-      if( (absoluteToothHistoryIndex - toothHistorySerialIndex) >= TOOTH_LOG_SIZE ) { BIT_SET(currentStatus.status1, BIT_STATUS1_TOOTHLOG1READY); }
-      else { BIT_CLEAR(currentStatus.status1, BIT_STATUS1_TOOTHLOG1READY); } //Tooth log is not yet ahead of the serial index by enough, so mark the log as not yet ready
+     if(toothHistoryIndex < (TOOTH_LOG_SIZE-1)) { toothHistoryIndex++; BIT_CLEAR(currentStatus.status1, BIT_STATUS1_TOOTHLOG1READY); }
+     else { BIT_SET(currentStatus.status1, BIT_STATUS1_TOOTHLOG1READY); }
     }
 
 
