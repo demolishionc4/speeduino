@@ -35,6 +35,7 @@ void setupBoard()
   digitalWrite(LED_COMS, LOW);
   #ifdef USE_SPI_EEPROM
     EEPROM.begin(SPI_for_flash, PIN_SPI_SS);
+    EEPROM.read(0);
   #endif
   #ifdef USE_I2C_BARO
     LPS_dev.begin();
@@ -88,9 +89,9 @@ void setPins()
   //******************************************
 
   pinTrigger = PE2; //106
-  //pinTrigger2 = PE3;  //107
-  //pinTrigger3 = PE4;  //104
-  //pinVSS = PE5;       //105
+  pinTrigger2 = PE3;  //107
+  pinTrigger3 = PE4;  //104
+  pinVSS = PE5;       //105
 
   //******************************************
   //******** ANALOG CONNECTIONS ***************
@@ -112,40 +113,40 @@ void setPins()
   //******** INJECTOR CONNECTIONS ***************
   //******************************************
 
-  pinInjector8 = PD11; //9
+  pinInjector8 = PD13; //9
   pinInjector7 = PD12; //8
-  //pinInjector6 = PD11; //7
-  //pinInjector5 = PD10; //6
-  //pinInjector4 = PD12;  //5
-  //pinInjector3 = PF14;  //4
-  pinInjector2 = PD13; //71
+  pinInjector6 = PD11; //7
+  pinInjector5 = PD10; //6
+  pinInjector4 = PD9;  //5
+  pinInjector3 = PD8;  //4
+  pinInjector2 = PF14; //71
   pinInjector1 = PF13; //70
 
   //******************************************
   //******** COIL CONNECTIONS ***************
   //******************************************
 
-  pinCoil1 = PG0; //59
-  pinCoil2 = PF15; //58
-  //pinCoil3 = PE13; //61
-  //pinCoil4 = PE12; //60
-  //pinCoil5 = PE11; //63
-  //pinCoil6 = PF15; //68
-  //pinCoil7 = PG0;  //69
-  //pinCoil8 = PG1;  //66
+  pinCoil1 = PE15; //59
+  pinCoil2 = PE14; //58
+  pinCoil3 = PE13; //61
+  pinCoil4 = PE12; //60
+  pinCoil5 = PE11; //63
+  pinCoil6 = PF15; //68
+  pinCoil7 = PG0;  //69
+  pinCoil8 = PG1;  //66
 
   //******************************************
   //******** OTHER CONNECTIONS ***************
   //******************************************
 
   //pinTachOut = PD14;    //10
-  pinIdle1 = PD11;      //11
+  //pinIdle1 = PD11;      //11
   //pinIdle2 = PG2;       //12
-  pinBoost = PD12;       //13
+  //pinBoost = PD12;       //13
   //pinStepperDir = PG4;  //14
   //pinStepperStep = PG5; //15
-  pinFuelPump = PG7;    //16
-  pinFan = PG6;         //17
+  //pinFuelPump = PG7;    //16
+  //pinFan = PG6;         //17
   //pinLaunch = PF5;      
 }
 

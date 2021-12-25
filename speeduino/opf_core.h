@@ -3,10 +3,10 @@
 #include "speeduino.h"
 #include <src/STM32_CAN/STM32_CAN.h>
 
-//#define USE_I2C_BARO
+#define USE_I2C_BARO
 //#define USE_DBW_IFX9201
 #define USE_CAN_DASH
-#define USE_SPI_EEPROM PB12
+#define USE_SPI_EEPROM PD6
 
 #ifdef USE_SPI_EEPROM
 #define PIN_SPI_SS USE_SPI_EEPROM   // W25Q16 (on board flash)
