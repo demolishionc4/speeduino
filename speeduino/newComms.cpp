@@ -264,6 +264,11 @@ void processSerialCommand()
         //STM32 DFU mode button
         TS_CommandButtonsHandler(cmdCombined);
       }
+      else if( (cmdCombined >= TS_CMD_SD_FORMAT) && (cmdCombined <= TS_CMD_SD_FORMAT) )
+      {
+        //SD Commands
+        TS_CommandButtonsHandler(cmdCombined);
+      }
       sendSerialReturnCode(SERIAL_RC_OK);
       break;
     }
@@ -450,8 +455,9 @@ void processSerialCommand()
           */
 
           //Max roots (Number of files)
-          serialPayload[9] = 0;
-          serialPayload[10] = 1;
+          uint16_t numLogFiles = getNextSDLogFileNumber() - 2; // -1 because this returns the NEXT file name not the current one and -1 because TS expects a 0 based index
+          serialPayload[9] = highByte(numLogFiles);
+          serialPayload[10] = lowByte(numLogFiles);
 
           //Dir Start (4 bytes)
           serialPayload[11] = 0;

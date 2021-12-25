@@ -26,7 +26,11 @@
 #define SERIAL_BUFFER_SIZE 517 //Size of the serial buffer used by new comms protocol. For SD transfers this must be at least 512 + 1 (flag) + 4 (sector)
 #define micros_safe() micros() //timer5 method is not used on anything but AVR, the micros_safe() macro is simply an alias for the normal micros()
 #define TIMER_RESOLUTION 4
-//#define SD_LOGGING
+
+#if defined(USER_BTN) 
+  #define EEPROM_RESET_PIN USER_BTN //onboard key0 for black STM32F407 boards and blackpills, keep pressed during boot to reset eeprom
+#endif
+
 #ifdef SD_LOGGING
 #define RTC_ENABLED
 #endif
@@ -63,7 +67,7 @@ extern "C" char* sbrk(int incr);
   #endif
 #else
   #ifdef USE_SPI_EEPROM
-    #define pinIsReserved(pin)  ( ((pin) == PA11) || ((pin) == PA12) || ((pin) == PB3) || ((pin) == PB4) || ((pin) == USE_SPI_EEPROM)  ) //Forbiden pins like USB
+    #define pinIsReserved(pin)  ( ((pin) == PA11) || ((pin) == PA12) || ((pin) == PB3) || ((pin) == PB4) || ((pin) == PB5) || ((pin) == USE_SPI_EEPROM) ) //Forbiden pins like USB
   #else
     #define pinIsReserved(pin)  ( ((pin) == PA11) || ((pin) == PA12) || ((pin) == PB3) || ((pin) == PB4) || ((pin) == PB5) || ((pin) == PB0) ) //Forbiden pins like USB
   #endif
@@ -316,20 +320,12 @@ void ignitionSchedule8Interrupt(HardwareTimer*);
 ***********************************************************************************************************
 * CAN / Second serial
 */
-#if defined(STM32F407xx) || defined(STM32F103xB) || defined(STM32F405xx)
+#if HAL_CAN_MODULE_ENABLED
 #define NATIVE_CAN_AVAILABLE
 //HardwareSerial CANSerial(PD6, PD5);
 #include <src/STM32_CAN/STM32_CAN.h>
 //This activates CAN1 interface on STM32, but it's named as Can0, because that's how Teensy implementation is done
 extern STM32_CAN Can0;
-/*
-Second CAN interface is also available if needed or it can be used also as primary CAN interface.
-for STM32F4 the default CAN1 pins are PD0 & PD1. Alternative (ALT) pins are PB8 & PB9 and ALT2 pins are PA11 and PA12:
-for STM32F4 the default CAN2 pins are PB5 & PB6. Alternative (ALT) pins are PB12 & PB13.
-for STM32F1 the default CAN1 pins are PA11 & PA12. Alternative (ALT) pins are PB8 & PB9.
-Example of using CAN2 as secondary CAN bus with alternative pins:
-STM32_CAN Can1 (_CAN2,ALT);
-*/
 
 static CAN_message_t outMsg;
 static CAN_message_t inMsg;
