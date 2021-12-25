@@ -21,9 +21,6 @@ void setupBoard()
   setPins();
   configPage2.pinMapping = 60;
 
-  STM32_CAN Can0(_CAN1, DEF);
-  STM32_CAN Can1(_CAN2, DEF);
-
   //STATUS LED
   pinMode(LED_RUNNING, OUTPUT);
   digitalWrite(LED_RUNNING, LOW);
