@@ -231,11 +231,8 @@ void resetPins()
 
 void runLoop()
 {
-
-  int recval = -1;
   if ((Serial.available()) > 0)
   {
-    //recval = Serial.read();
     digitalToggle(LED_COMS);
   }
   else
