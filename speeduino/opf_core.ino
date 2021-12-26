@@ -143,7 +143,7 @@ void setPins()
   //pinStepperDir = PG4;  //14
   //pinStepperStep = PG5; //15
   //pinFuelPump = PG7;    //16
-  //pinFan = PG6;         //17
+  pinFan = PG6;         //17
   //pinLaunch = PF5;      
 }
 
@@ -228,11 +228,8 @@ void resetPins()
 
 void runLoop()
 {
-
-  int recval = -1;
   if ((Serial.available()) > 0)
   {
-    //recval = Serial.read();
     digitalToggle(LED_COMS);
   }
   else
