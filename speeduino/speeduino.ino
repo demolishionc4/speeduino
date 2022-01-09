@@ -1373,7 +1373,7 @@ byte getVE1()
   else if (configPage2.fuelAlgorithm == LOAD_SOURCE_TPS)
   {
     //Alpha-N
-    currentStatus.fuelLoad = currentStatus.TPS;
+    currentStatus.fuelLoad = currentStatus.TPS * 2;
   }
   else if (configPage2.fuelAlgorithm == LOAD_SOURCE_IMAPEMAP)
   {
@@ -1402,7 +1402,7 @@ byte getAdvance1()
   else if(configPage2.ignAlgorithm == LOAD_SOURCE_TPS)
   {
     //Alpha-N
-    currentStatus.ignLoad = currentStatus.TPS;
+    currentStatus.ignLoad = currentStatus.TPS * 2;
 
   }
   else if (configPage2.fuelAlgorithm == LOAD_SOURCE_IMAPEMAP)
@@ -1548,7 +1548,7 @@ void calculateIgnitionAngles(int dwellAngle)
       {
         byte splitDegrees = 0;
         if (configPage2.fuelAlgorithm == LOAD_SOURCE_MAP) { splitDegrees = table2D_getValue(&rotarySplitTable, currentStatus.MAP/2); }
-        else { splitDegrees = table2D_getValue(&rotarySplitTable, currentStatus.TPS/2); }
+        else { splitDegrees = table2D_getValue(&rotarySplitTable, currentStatus.TPS); }
 
         //The trailing angles are set relative to the leading ones
         calculateIgnitionAngle3(dwellAngle, splitDegrees);
