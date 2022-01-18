@@ -87,7 +87,7 @@ uint16_t staged_req_fuel_mult_sec = 0;
 void setup()
 {
   initialisationComplete = false; //Tracks whether the initialiseAll() function has run completely
-  setupBoard();  
+  initialiseAll();
 }
 /** Speeduino main loop.
  * 
@@ -107,11 +107,9 @@ void setup()
  */
 void loop()
 {
-  
       mainLoopCount++;
       LOOP_TIMER = TIMER_mask;
-      
-      runLoop();
+
       //SERIAL Comms
       //Initially check that the last serial send values request is not still outstanding
       if (serialInProgress == true) 
@@ -280,6 +278,8 @@ void loop()
       //updateFullStatus();
       checkProgrammableIO();
 
+      if( (isEepromWritePending() == true) && (serialReceivePending == false) && (deferEEPROMWrites == false)) { writeAllConfig(); } //Check for any outstanding EEPROM writes.
+
       currentStatus.vss = getSpeed();
       currentStatus.gear = getGear();
 
@@ -302,8 +302,6 @@ void loop()
       #if TPS_READ_FREQUENCY == 30
         readTPS();
       #endif
-
-      if(isEepromWritePending() == true) { writeAllConfig(); } //Check for any outstanding EEPROM writes.
 
       #ifdef SD_LOGGING
         if(configPage13.onboard_log_file_rate == LOGGER_RATE_30HZ) { writeSDLogEntry(); }
@@ -388,10 +386,8 @@ void loop()
     if (BIT_CHECK(LOOP_TIMER, BIT_TIMER_1HZ)) //Once per second)
     {
       BIT_CLEAR(TIMER_mask, BIT_TIMER_1HZ);
-      //Infrequent baro readings are not an issue.
-      #ifndef USE_I2C_BARO
-        readBaro();
-      #endif //USE_I2C_BARO
+      readBaro(); //Infrequent baro readings are not an issue.
+      deferEEPROMWrites = false; //Reset the slow EEPROM writes flag so that EEPROM burns will return to normal speed. This is set true in NewComms whenever there is a large chunk write to prvent mega2560s halting due to excess EEPROM burn times. 
 
       if ( (configPage10.wmiEnabled > 0) && (configPage10.wmiIndicatorEnabled > 0) )
       {
