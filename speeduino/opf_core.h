@@ -38,9 +38,6 @@ extern HardwareTimer Timer10;
 #define PIN_WIRE_SDA PB11
 #define PIN_WIRE_SCL PB10
 
-extern STM32_CAN Can0;
-extern STM32_CAN Can1;
-
 void setupBoard();
 void resetPins();
 void setPins();

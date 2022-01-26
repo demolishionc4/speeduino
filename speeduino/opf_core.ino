@@ -8,21 +8,11 @@ TwoWire LPS_dev(PIN_WIRE_SDA, PIN_WIRE_SCL);
 LPS22HHSensor LPS_Sensor(&LPS_dev, LPS22HH_I2C_ADD_L);
 #endif //USE_I2C_BARO
 
-#ifdef USE_DBW_IFX9201
-
-HardwareTimer Timer10(TIM10);
-IFX9201 IFX9201_HBridge = IFX9201( );
-
-#endif //USE_DBW_IFX9201
-
 void setupBoard()
 {
   resetPins();
   setPins();
   configPage2.pinMapping = 60;
-
-  STM32_CAN Can0(_CAN1, DEF);
-  STM32_CAN Can1(_CAN2, DEF);
 
   //STATUS LED
   pinMode(LED_RUNNING, OUTPUT);
@@ -35,33 +25,13 @@ void setupBoard()
   digitalWrite(LED_COMS, LOW);
   #ifdef USE_SPI_EEPROM
     EEPROM.begin(SPI_for_flash, PIN_SPI_SS);
-    EEPROM.read(0);
   #endif
+  EEPROM.read(0);
   #ifdef USE_I2C_BARO
     LPS_dev.begin();
     LPS_Sensor.begin();
     LPS_Sensor.Enable();
   #endif //USE_I2C_BARO
-
-  #ifdef USE_DBW_IFX9201
-    // Timer10.setMode(1, TIMER_OUTPUT_COMPARE_PWM1, DIS_PIN);  //DBW PWM output fixed to PB8/
-    // Timer10.setOverflow(20000, HERTZ_FORMAT);
-    // Timer10.setCaptureCompare(1, 0, RESOLUTION_12B_COMPARE_FORMAT);
-    // Timer10.resume();
-    //IFX9201_HBridge.begin( DIR_PIN, STP_PIN, DIS_PIN );
-
-    //IFX9201_HBridge.forwards( 50 );       // Same as forwards( )
-    //IFX9201_HBridge.stop( );
-    //IFX9201_HBridge.backwards( 50 );
-    //IFX9201_HBridge.stop( );
-
-    // TIM_TypeDef *Instance = (TIM_TypeDef *)pinmap_peripheral(digitalPinToPinName(DIS_PIN), PinMap_PWM);
-    // uint32_t channel = STM_PIN_CHANNEL(pinmap_function(digitalPinToPinName(DIS_PIN), PinMap_PWM));
-    //Timer10->setPWM(channel, DIS_PIN, 10, 50, dbwScheduleInterrupt);
-
-    //DBWMotor.begin();
-    //DBWMotor.setSpeed(100);
-  #endif //USE_DBW_IFX9201
 
   initialiseAll();
   
@@ -240,17 +210,15 @@ void runLoop()
     digitalWrite(LED_COMS, LOW);
   }
 
-  digitalWrite(LED_ALERT, currentStatus.engineProtectStatus);
   #ifdef USE_CAN_DASH
     dash_generic(&Can1);
   #endif
   if (BIT_CHECK(LOOP_TIMER, BIT_TIMER_1HZ)) //1 hertz
   {
-
-    //DBWMotor.move_revolution(4);
   }
   if (BIT_CHECK(LOOP_TIMER, BIT_TIMER_4HZ)) //4 hertz
   {
+    digitalWrite(LED_ALERT, currentStatus.engineProtectStatus);
   }
   if (BIT_CHECK(LOOP_TIMER, BIT_TIMER_10HZ)) //10 hertz
   {
@@ -266,7 +234,6 @@ void runLoop()
   }
   if (BIT_CHECK(LOOP_TIMER, BIT_TIMER_15HZ)) //15 hertz
   {
-    //Timer10.setCaptureCompare(1, abs(2048), RESOLUTION_12B_COMPARE_FORMAT);
   }
   if (BIT_CHECK(LOOP_TIMER, BIT_TIMER_30HZ)) //30 hertz
   {
