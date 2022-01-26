@@ -24,9 +24,14 @@
 #define PINMASK_TYPE uint32_t
 #define COMPARE_TYPE uint16_t
 #define COUNTER_TYPE uint16_t
+#define SERIAL_BUFFER_SIZE 517 //Size of the serial buffer used by new comms protocol. For SD transfers this must be at least 512 + 1 (flag) + 4 (sector)
 #define micros_safe() micros() //timer5 method is not used on anything but AVR, the micros_safe() macro is simply an alias for the normal micros()
 #define TIMER_RESOLUTION 4
-//#define SD_LOGGING
+
+#if defined(USER_BTN) 
+  #define EEPROM_RESET_PIN USER_BTN //onboard key0 for black STM32F407 boards and blackpills, keep pressed during boot to reset eeprom
+#endif
+
 #ifdef SD_LOGGING
 #define RTC_ENABLED
 #endif
@@ -64,11 +69,13 @@ extern "C" char* sbrk(int incr);
   #endif
 #else
   #ifdef USE_SPI_EEPROM
-    #define pinIsReserved(pin)  ( ((pin) == PA11) || ((pin) == PA12) || ((pin) == PB3) || ((pin) == PB4) || ((pin) == USE_SPI_EEPROM)  ) //Forbiden pins like USB
+    #define pinIsReserved(pin)  ( ((pin) == PA11) || ((pin) == PA12) || ((pin) == PB3) || ((pin) == PB4) || ((pin) == PB5) || ((pin) == USE_SPI_EEPROM) ) //Forbiden pins like USB
   #else
     #define pinIsReserved(pin)  ( ((pin) == PB12) || ((pin) == PB13) || ((pin) == PA11) || ((pin) == PA12) || ((pin) == PB3) || ((pin) == PB4) ) //Forbiden pins like USB
   #endif
 #endif
+
+#define PWM_FAN_AVAILABLE
 
 #ifndef LED_BUILTIN
   #define LED_BUILTIN PA7
@@ -123,14 +130,14 @@ extern "C" char* sbrk(int incr);
 * Schedules
 * Timers Table for STM32F1
 *   TIMER1    TIMER2    TIMER3    TIMER4
-* 1 - free  1 - INJ1  1 - IGN1  1 - oneMSInterval
+* 1 - FAN   1 - INJ1  1 - IGN1  1 - oneMSInterval
 * 2 - BOOST 2 - INJ2  2 - IGN2  2 -
 * 3 - VVT   3 - INJ3  3 - IGN3  3 -
 * 4 - IDLE  4 - INJ4  4 - IGN4  4 -
 *
 * Timers Table for STM32F4
 *   TIMER1  |  TIMER2  |  TIMER3  |  TIMER4  |  TIMER5  |  TIMER11
-* 1 - free  |1 - INJ1  |1 - IGN1  |1 - IGN5  |1 - INJ5  |1 - oneMSInterval
+* 1 - FAN  |1 - INJ1  |1 - IGN1  |1 - IGN5  |1 - INJ5  |1 - oneMSInterval
 * 2 - BOOST |2 - INJ2  |2 - IGN2  |2 - IGN6  |2 - INJ6  |
 * 3 - VVT   |3 - INJ3  |3 - IGN3  |3 - IGN7  |3 - INJ7  |
 * 4 - IDLE  |4 - INJ4  |4 - IGN4  |4 - IGN8  |4 - INJ8  | 
@@ -233,10 +240,15 @@ extern "C" char* sbrk(int incr);
 #define ENABLE_VVT_TIMER()    (TIM1)->SR = ~TIM_FLAG_CC3; (TIM1)->DIER |= TIM_DIER_CC3IE
 #define DISABLE_VVT_TIMER()   (TIM1)->DIER &= ~TIM_DIER_CC3IE
 
+#define ENABLE_FAN_TIMER()  (TIM1)->SR = ~TIM_FLAG_CC1; (TIM1)->DIER |= TIM_DIER_CC1IE
+#define DISABLE_FAN_TIMER() (TIM1)->DIER &= ~TIM_DIER_CC1IE
+
 #define BOOST_TIMER_COMPARE   (TIM1)->CCR2
 #define BOOST_TIMER_COUNTER   (TIM1)->CNT
 #define VVT_TIMER_COMPARE     (TIM1)->CCR3
 #define VVT_TIMER_COUNTER     (TIM1)->CNT
+#define FAN_TIMER_COMPARE     (TIM1)->CCR1
+#define FAN_TIMER_COUNTER     (TIM1)->CNT
 
 /*
 ***********************************************************************************************************
@@ -287,6 +299,7 @@ void fuelSchedule8Interrupt(HardwareTimer*);
 #endif
 void idleInterrupt(HardwareTimer*);
 void vvtInterrupt(HardwareTimer*);
+void fanInterrupt(HardwareTimer*);
 void ignitionSchedule1Interrupt(HardwareTimer*);
 void ignitionSchedule2Interrupt(HardwareTimer*);
 void ignitionSchedule3Interrupt(HardwareTimer*);
@@ -309,7 +322,7 @@ void ignitionSchedule8Interrupt(HardwareTimer*);
 ***********************************************************************************************************
 * CAN / Second serial
 */
-#if defined(STM32F407xx) || defined(STM32F103xB) || defined(STM32F405xx)
+#if HAL_CAN_MODULE_ENABLED
 #define NATIVE_CAN_AVAILABLE
 //HardwareSerial CANSerial(PD6, PD5);
 #include <src/STM32_CAN/STM32_CAN.h>
