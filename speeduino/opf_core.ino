@@ -4,8 +4,12 @@
 #include "opf_core.h"
 
 #ifdef USE_I2C_BARO
-TwoWire LPS_dev(PIN_WIRE_SDA, PIN_WIRE_SCL);
-LPS22HHSensor LPS_Sensor(&LPS_dev, LPS22HH_I2C_ADD_L);
+    TwoWire LPS_dev(PIN_WIRE_SDA, PIN_WIRE_SCL);
+    #if (CORE8_VERSION == 23)
+        LPS25HBSensor LPS_Sensor(&LPS_dev, LPS25HB_ADDRESS_LOW);
+    #else
+        LPS22HHSensor LPS_Sensor(&LPS_dev, LPS22HH_I2C_ADD_L);
+    #endif //CORE8_VERSION
 #endif //USE_I2C_BARO
 
 void setupBoard()
@@ -30,6 +34,10 @@ void setupBoard()
   #ifdef USE_I2C_BARO
     LPS_dev.begin();
     LPS_Sensor.begin();
+    #if (CORE8_VERSION == 23)
+        LPS_Sensor.SetODR(7.0f);
+    #endif //CORE8_VERSION
+    
     LPS_Sensor.Enable();
   #endif //USE_I2C_BARO
 
@@ -43,14 +51,6 @@ void setupBoard()
   Can1.setBaudRate(500000);
   Can1.enableFIFO();
 }
-
-#ifdef USE_DBW_IFX9201
-void dbwScheduleInterrupt(){
-  digitalToggle(LED_WARNING);
-}
-#endif //USE_DBW_IFX9201
-
-
 void setPins()
 {
 
@@ -96,10 +96,10 @@ void setPins()
   //******** COIL CONNECTIONS ***************
   //******************************************
 
-  pinCoil1 = PE15; //59
-  pinCoil2 = PE14; //58
-  pinCoil3 = PE13; //61
-  pinCoil4 = PE12; //60
+  pinCoil1 = PE14; //58 
+  pinCoil2 = PE15; //59
+  pinCoil3 = PE12; //60 
+  pinCoil4 = PE13; //61 
   pinCoil5 = PE11; //63
   pinCoil6 = PF15; //68
   pinCoil7 = PG0;  //69
@@ -116,7 +116,7 @@ void setPins()
   //pinStepperDir = PG4;  //14
   //pinStepperStep = PG5; //15
   //pinFuelPump = PG7;    //16
-  pinFan = PG6;         //17
+  //pinFan = PG6;         //17
   //pinLaunch = PF5;      
 }
 
@@ -214,15 +214,7 @@ void runLoop()
     dash_generic(&Can1);
   #endif
   if (BIT_CHECK(LOOP_TIMER, BIT_TIMER_1HZ)) //1 hertz
-  {
-  }
-  if (BIT_CHECK(LOOP_TIMER, BIT_TIMER_4HZ)) //4 hertz
-  {
-    digitalWrite(LED_ALERT, currentStatus.engineProtectStatus);
-  }
-  if (BIT_CHECK(LOOP_TIMER, BIT_TIMER_10HZ)) //10 hertz
-  {
-    digitalToggle(LED_RUNNING);
+  {    
     #ifdef USE_I2C_BARO
         float pressure;
         float temperature;
@@ -231,6 +223,14 @@ void runLoop()
         currentStatus.fuelTemp = temperature;
         currentStatus.baro = pressure / 10.0f;
     #endif
+  }
+  if (BIT_CHECK(LOOP_TIMER, BIT_TIMER_4HZ)) //4 hertz
+  {
+    digitalWrite(LED_ALERT, currentStatus.engineProtectStatus);
+  }
+  if (BIT_CHECK(LOOP_TIMER, BIT_TIMER_10HZ)) //10 hertz
+  {
+    digitalToggle(LED_RUNNING);
   }
   if (BIT_CHECK(LOOP_TIMER, BIT_TIMER_15HZ)) //15 hertz
   {
