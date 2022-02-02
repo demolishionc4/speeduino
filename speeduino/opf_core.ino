@@ -50,6 +50,7 @@ void setupBoard()
   Can1.setBaudRate(500000);
   Can1.enableFIFO();
 }
+
 void setPins()
 {
 
@@ -57,35 +58,36 @@ void setPins()
   //******** Trigger CONNECTIONS ***************
   //******************************************
 
-  pinTrigger = PE2; //106
-  pinTrigger2 = PE3;  //107
-  pinTrigger3 = PE4;  //104
-  pinVSS = PE5;       //105
+  pinTrigger = PE2;   //106
+  pinTrigger2 = PE3; //107
+  pinTrigger3 = PE4; //104
+  pinVSS = PE5; //105
 
   //******************************************
   //******** ANALOG CONNECTIONS ***************
   //******************************************
 
-  pinBat = PA0;  //A12
-  pinCLT = PA3;  //A7
-  pinTPS = PA2;  //A9
-  pinIAT = PA4;  //A8
-  pinO2 = PC1;   //A13
-  pinO2_2 = PC2; //A14
-  pinBaro = PC5; //A1
-  pinMAP = PA5;   //A5
-  pinOilPressure = PA1;  //A0
-  pinSpareTemp1 = PC4; //OIL TEMP
-  //pinFuelPressure = PC4; //A2
+  pinBat = PA0;  //A12  BAT-REF
+  pinTPS = PC5;  //A1   TPS -> B_C6
+  pinIAT = PA1;  //A9  IAT -> G_C4
+  pinCLT = PA3;  //A7   CLT -> G_C6
+  pinO2 = PC1;   //A13  O2
+  pinO2_2 = PC2; //A14  O22
+  pinBaro = PB0; //A2   Baro
+  pinMAP = PA5;   //A5 MAP
+  //pinOilPressure = PB1;  //A8
+  //pinFuelPressure = PB0; //A15
+  pinSpareTemp1 = PA2; //A10 -> G_C5
+  pinOilPressure = PA4; //A8 -> G_C7
 
   //******************************************
   //******** INJECTOR CONNECTIONS ***************
   //******************************************
 
-  pinInjector8 = PD13; //9
-  pinInjector7 = PD12; //8
-  pinInjector6 = PD11; //7
-  pinInjector5 = PD10; //6
+  //pinInjector8 = PD13; //9
+  //pinInjector7 = PD12; //8
+  //pinInjector6 = PD11; //7
+  //pinInjector5 = PD10; //6
   pinInjector4 = PD9;  //5
   pinInjector3 = PD8;  //4
   pinInjector2 = PF14; //71
@@ -95,29 +97,31 @@ void setPins()
   //******** COIL CONNECTIONS ***************
   //******************************************
 
-  pinCoil1 = PE14; //58 
-  pinCoil2 = PE15; //59
-  pinCoil3 = PE12; //60 
-  pinCoil4 = PE13; //61 
-  pinCoil5 = PE11; //63
-  pinCoil6 = PF15; //68
-  pinCoil7 = PG0;  //69
-  pinCoil8 = PG1;  //66
+  pinCoil1 = PG1; //66
+  pinCoil2 = PG0; //69
+  pinCoil3 = PF15; //68
+  pinCoil4 = PE11; //63
+  //pinCoil5 = PE11; //63
+  //pinCoil6 = PF15; //68
+  //pinCoil7 = PG0;  //69
+  //pinCoil8 = PG1;  //66
 
   //******************************************
   //******** OTHER CONNECTIONS ***************
   //******************************************
 
-  //pinTachOut = PD14;    //10
-  //pinIdle1 = PD11;      //11
+  pinTachOut = PD14;    //10
+  pinIdle1 = PG3;      //13
   //pinIdle2 = PG2;       //12
-  //pinBoost = PD12;       //13
+  //pinBoost = PG4;       //13
   //pinStepperDir = PG4;  //14
   //pinStepperStep = PG5; //15
-  //pinFuelPump = PG7;    //16
-  //pinFan = PG6;         //17
-  //pinLaunch = PF5;      
+  pinFuelPump = PG6;    //16
+  //pinFan = PG7;         //17  
+  pinLaunch = PF5;
+  pinVVT_1 = PG2;
 }
+
 
 void resetPins()
 {
