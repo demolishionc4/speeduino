@@ -4,25 +4,19 @@
 #include "opf_core.h"
 
 #ifdef USE_I2C_BARO
-TwoWire LPS_dev(PIN_WIRE_SDA, PIN_WIRE_SCL);
-LPS25HBSensor LPS_Sensor(&LPS_dev, LPS25HB_ADDRESS_LOW);
+    TwoWire LPS_dev(PIN_WIRE_SDA, PIN_WIRE_SCL);
+    #if (CORE8_VERSION == 23)
+        LPS25HBSensor LPS_Sensor(&LPS_dev, LPS25HB_ADDRESS_LOW);
+    #else
+        LPS22HHSensor LPS_Sensor(&LPS_dev, LPS22HH_I2C_ADD_L);
+    #endif //CORE8_VERSION
 #endif //USE_I2C_BARO
-
-#ifdef USE_DBW_IFX9201
-
-HardwareTimer Timer10(TIM10);
-IFX9201 IFX9201_HBridge = IFX9201( );
-
-#endif //USE_DBW_IFX9201
 
 void setupBoard()
 {
   resetPins();
   setPins();
   configPage2.pinMapping = 60;
-
-  STM32_CAN Can0(_CAN1, DEF);
-  STM32_CAN Can1(_CAN2, DEF);
 
   //STATUS LED
   pinMode(LED_RUNNING, OUTPUT);
@@ -34,60 +28,28 @@ void setupBoard()
   pinMode(LED_COMS, OUTPUT);
   digitalWrite(LED_COMS, LOW);
   #ifdef USE_SPI_EEPROM
-    SPIClass SPI_for_flash(PIN_SPI_MOSI, PIN_SPI_MISO, PIN_SPI_SCK); //SPI1_MOSI, SPI1_MISO, SPI1_SCK
-
-    //windbond W25Q16 SPI flash EEPROM emulation
-    EEPROM_Emulation_Config EmulatedEEPROMMconfig{255UL, 16384UL, 31, 0x00100000UL};
-    Flash_SPI_Config SPIconfig{USE_SPI_EEPROM, SPI_for_flash};
-    SPI_EEPROM_Class EEPROM(EmulatedEEPROMMconfig, SPIconfig);
     EEPROM.begin(SPI_for_flash, PIN_SPI_SS);
-    //EEPROM.clear();
   #endif
+  EEPROM.read(0);
   #ifdef USE_I2C_BARO
     LPS_dev.begin();
     LPS_Sensor.begin();
-    LPS_Sensor.SetODR(7.0f);
+    #if (CORE8_VERSION == 23)
+        LPS_Sensor.SetODR(7.0f);
+    #endif //CORE8_VERSION    
     LPS_Sensor.Enable();
   #endif //USE_I2C_BARO
 
-  #ifdef USE_DBW_IFX9201
-    Timer10.setMode(1, TIMER_OUTPUT_COMPARE_PWM1, DIS_PIN);  //DBW PWM output fixed to PB8/
-    Timer10.setOverflow(20000, HERTZ_FORMAT);
-    Timer10.setCaptureCompare(1, 0, RESOLUTION_12B_COMPARE_FORMAT);
-    Timer10.resume();
-    //IFX9201_HBridge.begin( DIR_PIN, STP_PIN, DIS_PIN );
-
-    //IFX9201_HBridge.forwards( 50 );       // Same as forwards( )
-    //IFX9201_HBridge.stop( );
-    //IFX9201_HBridge.backwards( 50 );
-    //IFX9201_HBridge.stop( );
-
-    // TIM_TypeDef *Instance = (TIM_TypeDef *)pinmap_peripheral(digitalPinToPinName(DIS_PIN), PinMap_PWM);
-    // uint32_t channel = STM_PIN_CHANNEL(pinmap_function(digitalPinToPinName(DIS_PIN), PinMap_PWM));
-    //Timer10->setPWM(channel, DIS_PIN, 10, 50, dbwScheduleInterrupt);
-
-    //DBWMotor.begin();
-    //DBWMotor.setSpeed(100);
-  #endif //USE_DBW_IFX9201
-
   initialiseAll();
   
-      Can0.begin();
-      Can0.setBaudRate(500000);
-      Can0.enableFIFO();
-      
-      Can1.begin();
-      Can1.setBaudRate(500000);
-      Can1.enableFIFO();
+  Can0.begin();
+  Can0.setBaudRate(500000);
+  Can0.enableFIFO();
+  
+  Can1.begin();
+  Can1.setBaudRate(500000);
+  Can1.enableFIFO();
 }
-
-#ifdef USE_DBW_IFX9201
-void dbwScheduleInterrupt(){
-  digitalToggle(LED_WARNING);
-}
-#endif //USE_DBW_IFX9201
-
-
 void setPins()
 {
 
@@ -103,18 +65,18 @@ void setPins()
   //******************************************
   //******** ANALOG CONNECTIONS ***************
   //******************************************
-  //ADC1 = STM_PIN_DATA_EXT(STM_MODE_ANALOG, GPIO_NOPULL, 0, 6, 0)
 
   pinBat = PA0;  //A12
   pinCLT = PA3;  //A7
-  pinTPS = PA1;  //A9
+  pinTPS = PA2;  //A9
   pinIAT = PA4;  //A8
   pinO2 = PC1;   //A13
   pinO2_2 = PC2; //A14
   pinBaro = PC5; //A1
   pinMAP = PA5;   //A5
-  pinOilPressure = PB1;  //A0
-  pinFuelPressure = PB0; //A2
+  pinOilPressure = PA1;  //A0
+  pinSpareTemp1 = PC4; //OIL TEMP
+  //pinFuelPressure = PC4; //A2
 
   //******************************************
   //******** INJECTOR CONNECTIONS ***************
@@ -133,10 +95,10 @@ void setPins()
   //******** COIL CONNECTIONS ***************
   //******************************************
 
-  pinCoil1 = PE15; //59
-  pinCoil2 = PE14; //58
-  pinCoil3 = PE13; //61
-  pinCoil4 = PE12; //60
+  pinCoil1 = PE14; //58 
+  pinCoil2 = PE15; //59
+  pinCoil3 = PE12; //60 
+  pinCoil4 = PE13; //61 
   pinCoil5 = PE11; //63
   pinCoil6 = PF15; //68
   pinCoil7 = PG0;  //69
@@ -146,14 +108,15 @@ void setPins()
   //******** OTHER CONNECTIONS ***************
   //******************************************
 
-  pinTachOut = PD14;    //10
-  pinIdle1 = PD15;      //11
-  pinIdle2 = PG2;       //12
-  pinBoost = PG3;       //13
-  pinStepperDir = PG4;  //14
-  pinStepperStep = PG5; //15
-  pinFuelPump = PG6;    //16
-  pinFan = PG7;         //17
+  //pinTachOut = PD14;    //10
+  //pinIdle1 = PD11;      //11
+  //pinIdle2 = PG2;       //12
+  //pinBoost = PD12;       //13
+  //pinStepperDir = PG4;  //14
+  //pinStepperStep = PG5; //15
+  //pinFuelPump = PG7;    //16
+  //pinFan = PG6;         //17
+  //pinLaunch = PF5;      
 }
 
 void resetPins()
@@ -237,11 +200,8 @@ void resetPins()
 
 void runLoop()
 {
-
-  int recval = -1;
   if ((Serial.available()) > 0)
   {
-    //recval = Serial.read();
     digitalToggle(LED_COMS);
   }
   else
@@ -249,25 +209,23 @@ void runLoop()
     digitalWrite(LED_COMS, LOW);
   }
 
-  digitalWrite(LED_ALERT, currentStatus.engineProtectStatus);
-#ifdef USE_CAN_DASH
-  dash_generic(&Can1);
-#endif
+  #ifdef USE_CAN_DASH
+    dash_generic(&Can1);
+  #endif
   if (BIT_CHECK(LOOP_TIMER, BIT_TIMER_1HZ)) //1 hertz
-  {
-#ifdef USE_I2C_BARO
-    float pressure;
-    float temperature;
-    LPS_Sensor.GetPressure(&pressure);
-    LPS_Sensor.GetTemperature(&temperature);
-    currentStatus.fuelTemp = temperature;
-    currentStatus.baro = pressure / 10.0f;
-#endif
-
-    //DBWMotor.move_revolution(4);
+  {    
+    #ifdef USE_I2C_BARO
+        float pressure;
+        float temperature;
+        LPS_Sensor.GetPressure(&pressure);
+        LPS_Sensor.GetTemperature(&temperature);
+        currentStatus.fuelTemp = temperature;
+        currentStatus.baro = pressure / 10.0f;
+    #endif
   }
   if (BIT_CHECK(LOOP_TIMER, BIT_TIMER_4HZ)) //4 hertz
   {
+    digitalWrite(LED_ALERT, currentStatus.engineProtectStatus);
   }
   if (BIT_CHECK(LOOP_TIMER, BIT_TIMER_10HZ)) //10 hertz
   {
@@ -275,7 +233,6 @@ void runLoop()
   }
   if (BIT_CHECK(LOOP_TIMER, BIT_TIMER_15HZ)) //15 hertz
   {
-    //Timer10.setCaptureCompare(1, abs(2048), RESOLUTION_12B_COMPARE_FORMAT);
   }
   if (BIT_CHECK(LOOP_TIMER, BIT_TIMER_30HZ)) //30 hertz
   {
