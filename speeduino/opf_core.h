@@ -7,7 +7,7 @@
 #define USE_CAN_DASH
 
 
-#define CORE8_VERSION 23
+#define CORE8_VERSION 24
 
 #if (CORE8_VERSION == 23)
     #define USE_SPI_EEPROM PB12
