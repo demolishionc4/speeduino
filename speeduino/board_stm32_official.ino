@@ -369,15 +369,6 @@ STM32RTC& rtc = STM32RTC::getInstance();
     #endif
   }
 
-  void doClearFlash( void ) 
-  {
-    digitalWrite(LED_WARNING, HIGH);
-    EEPROM.read(0); 
-    EEPROM.clear();
-    digitalWrite(LED_WARNING, LOW);
-    doSystemReset();
-  }
-
   /*
   ***********************************************************************************************************
   * Interrupt callback functions
