@@ -101,19 +101,20 @@ void setPins()
   pinTPS = PA2;  //A9
   pinIAT = PA4;  //A8
   pinO2 = PC1;   //A13
-  pinO2_2 = PC2; //A14
-  pinBaro = PC5; //A1
+  //pinO2_2 = PC2; //A14
+  //pinBaro = PC5; //A1
   pinMAP = PA5;   //A5
   pinOilPressure = PA1;  //A0
-  pinSpareTemp1 = PC4; //OIL TEMP
+  //pinSpareTemp1 = PC4; //OIL TEMP
   //pinFuelPressure = PC4; //A2
+  //pinFuel = PC4; //A2
 
   //******************************************
   //******** INJECTOR CONNECTIONS ***************
   //******************************************
 
-  pinInjector8 = PD11; //9
-  pinInjector7 = PD12; //8
+  //pinInjector8 = PD11; //9
+  //pinInjector7 = PD12; //8
   //pinInjector6 = PD11; //7
   //pinInjector5 = PD10; //6
   //pinInjector4 = PD12;  //5
@@ -138,7 +139,7 @@ void setPins()
   //******** OTHER CONNECTIONS ***************
   //******************************************
 
-  //pinTachOut = PD14;    //10
+  //pinTachOut = PG5;    //10
   pinIdle1 = PD11;      //11
   //pinIdle2 = PG2;       //12
   pinBoost = PD12;       //13
