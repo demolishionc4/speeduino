@@ -310,6 +310,8 @@ void dash_generic(STM32_CAN *can)
     outMsg.buf[6] = lowByte(0x00);                                                     // ECU_OIL_T
     outMsg.buf[7] = highByte(0x00);                                                    // ECU_OIL_T
     can->write(outMsg);
+    
+    delay(1);
 
     outMsg.id = 0x5F3;
     outMsg.len = 8;
@@ -346,6 +348,8 @@ void dash_generic(STM32_CAN *can)
     outMsg.buf[6] = lowByte(0x00);  // ECU_FUEL_LEV
     outMsg.buf[7] = highByte(0x00); // ECU_FUEL_LEV
     can->write(outMsg);
+    
+    delay(1);
 
     outMsg.id = 0x5F6;
     outMsg.len = 8;
@@ -383,6 +387,8 @@ void dash_generic(STM32_CAN *can)
     outMsg.buf[7] = highByte(0x00); // ECU_CLUCH_P
     can->write(outMsg);
 
+    delay(1);
+
     outMsg.id = 0x5F9;
     outMsg.len = 8;
     outMsg.buf[0] = lowByte(0x00);  // ECU_BRK_P_FR
@@ -418,6 +424,8 @@ void dash_generic(STM32_CAN *can)
     outMsg.buf[6] = lowByte((uint16_t)((currentStatus.injAngle * 100) * 3));  // ECU_IGN_ANG2
     outMsg.buf[7] = highByte((uint16_t)((currentStatus.injAngle * 100) * 3)); // ECU_IGN_ANG2
     can->write(outMsg);
+    
+    delay(1);
 
     outMsg.id = 0x5FC;
     outMsg.len = 8;
@@ -454,6 +462,8 @@ void dash_generic(STM32_CAN *can)
     outMsg.buf[6] = lowByte(0x00);  // ECC_USER04
     outMsg.buf[7] = highByte(0x00); // ECC_USER04
     can->write(outMsg);
+    
+    delay(1);
 
     outMsg.id = 0x5FF;
     outMsg.len = 8;
