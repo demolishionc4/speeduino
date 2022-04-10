@@ -2225,8 +2225,6 @@ void setPinMapping(byte boardID)
     
  
     case 60:
-        resetPins();
-        setPins();
       break;
     default:
       #if defined(STM32F407xx)
