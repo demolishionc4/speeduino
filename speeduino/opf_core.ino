@@ -53,71 +53,72 @@ void setupBoard()
 }
 void setPins()
 {
-
-  //******************************************
+//******************************************
   //******** Trigger CONNECTIONS ***************
   //******************************************
 
-  pinTrigger = PE2;  // 106
-  pinTrigger2 = PE3; // 107
-  pinTrigger3 = PE4; // 104
-  pinVSS = PE5;      // 105
+  pinTrigger = PE2; //106
+  //pinTrigger2 = PE3;  //107
+  //pinTrigger3 = PE4;  //104
+  //pinVSS = PE5;       //105
 
   //******************************************
   //******** ANALOG CONNECTIONS ***************
   //******************************************
 
-  pinBat = PA0;         // A12
-  pinCLT = PA3;         // A7
-  pinTPS = PA1;         // A9
-  pinIAT = PA4;         // A8
-  pinO2 = PC1;          // A13
-  pinO2_2 = PC2;        // A14
-  pinBaro = PC5;        // A1
-  pinMAP = PA5;         // A5
-  pinOilPressure = PA7; // A0
-  pinSpareTemp1 = PC4;  // OIL TEMP
-  // pinFuelPressure = PC4; //A2
+  pinBat = PA0;  //A12
+  pinCLT = PA3;  //A7
+  pinTPS = PA2;  //A9
+  pinIAT = PA4;  //A8
+  pinO2 = PC1;   //A13
+  //pinO2_2 = PC2; //A14
+  //pinBaro = PC5; //A1
+  pinMAP = PA5;   //A5
+  pinOilPressure = PA1;  //A0
+  //pinSpareTemp1 = PC4; //OIL TEMP
+  //pinSpareTemp2 =;
+  //pinFuelPressure = PC4; //A2
+  //pinFuel = PC4; //A2
 
   //******************************************
   //******** INJECTOR CONNECTIONS ***************
   //******************************************
 
-  pinInjector8 = PD13; // 9
-  pinInjector7 = PD12; // 8
-  pinInjector6 = PD11; // 7
-  pinInjector5 = PD10; // 6
-  pinInjector4 = PD9;  // 5
-  pinInjector3 = PD8;  // 4
-  pinInjector2 = PF14; // 71
-  pinInjector1 = PF13; // 70
+  //pinInjector8 = PD11; //9
+  //pinInjector7 = PD12; //8
+  //pinInjector6 = PD11; //7
+  //pinInjector5 = PD10; //6
+  //pinInjector4 = PD12;  //5
+  //pinInjector3 = PG5;//PF14;  //4
+  pinInjector2 = PD13; //71
+  pinInjector1 = PF13; //70
 
   //******************************************
   //******** COIL CONNECTIONS ***************
   //******************************************
 
-  pinCoil1 = PE14; // 58
-  pinCoil2 = PE15; // 59
-  pinCoil3 = PE12; // 60
-  pinCoil4 = PE13; // 61
-  pinCoil5 = PE11; // 63
-  pinCoil6 = PF15; // 68
-  pinCoil7 = PG0;  // 69
-  pinCoil8 = PG1;  // 66
+  pinCoil1 = PG0; //59
+  pinCoil2 = PF15; //58
+  //pinCoil3 = PE13; //61
+  //pinCoil4 = PE12; //60
+  //pinCoil5 = PE11; //63
+  //pinCoil6 = PF15; //68
+  //pinCoil7 = PG0;  //69
+  //pinCoil8 = PG1;  //66
 
   //******************************************
   //******** OTHER CONNECTIONS ***************
   //******************************************
 
-  // pinTachOut = PD14;    //10
-  // pinIdle1 = PD11;      //11
-  // pinIdle2 = PG2;       //12
-  // pinBoost = PD12;       //13
-  // pinStepperDir = PG4;  //14
-  // pinStepperStep = PG5; //15
-  // pinFuelPump = PG7;    //16
-  // pinFan = PG6;         //17
-  // pinLaunch = PF5;
+  //pinTachOut = PG5;    //10
+  pinIdle1 = PD11;      //11
+  //pinIdle2 = PG2;       //12
+  pinBoost = PD12;       //13
+  //pinStepperDir = PG4;  //14
+  //pinStepperStep = PG5; //15
+  pinFuelPump = PG7;    //16
+  pinFan = PG6;         //17
+  //pinLaunch = PF5;      
 }
 
 void resetPins()
@@ -211,7 +212,7 @@ void runLoop()
   }
 
 #ifdef USE_CAN_DASH
-  dash_generic(&Can0);
+  dash_generic(&Can1);
 #endif
   if (BIT_CHECK(LOOP_TIMER, BIT_TIMER_1HZ)) // 1 hertz
   {
