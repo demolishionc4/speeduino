@@ -5,26 +5,21 @@
 
 #ifdef USE_I2C_BARO
 TwoWire LPS_dev(PIN_WIRE_SDA, PIN_WIRE_SCL);
+#if (CORE8_VERSION == 23)
+LPS25HBSensor LPS_Sensor(&LPS_dev, LPS25HB_ADDRESS_LOW);
+#else
 LPS22HHSensor LPS_Sensor(&LPS_dev, LPS22HH_I2C_ADD_L);
-#endif //USE_I2C_BARO
-
-#ifdef USE_DBW_IFX9201
-
-HardwareTimer Timer10(TIM10);
-IFX9201 IFX9201_HBridge = IFX9201( );
-
-#endif //USE_DBW_IFX9201
+#endif // CORE8_VERSION
+#endif // USE_I2C_BARO
 
 void setupBoard()
 {
+  configPage2.pinMapping = 60;
+  
   resetPins();
   setPins();
-  configPage2.pinMapping = 60;
 
-  STM32_CAN Can0(_CAN1, DEF);
-  STM32_CAN Can1(_CAN2, DEF);
-
-  //STATUS LED
+  // STATUS LED
   pinMode(LED_RUNNING, OUTPUT);
   digitalWrite(LED_RUNNING, LOW);
   pinMode(LED_WARNING, OUTPUT);
@@ -33,53 +28,32 @@ void setupBoard()
   digitalWrite(LED_ALERT, LOW);
   pinMode(LED_COMS, OUTPUT);
   digitalWrite(LED_COMS, LOW);
-  #ifdef USE_SPI_EEPROM
-    EEPROM.begin(SPI_for_flash, PIN_SPI_SS);
-  #endif
-  #ifdef USE_I2C_BARO
-    LPS_dev.begin();
-    LPS_Sensor.begin();
-    LPS_Sensor.Enable();
-  #endif //USE_I2C_BARO
 
-  #ifdef USE_DBW_IFX9201
-    // Timer10.setMode(1, TIMER_OUTPUT_COMPARE_PWM1, DIS_PIN);  //DBW PWM output fixed to PB8/
-    // Timer10.setOverflow(20000, HERTZ_FORMAT);
-    // Timer10.setCaptureCompare(1, 0, RESOLUTION_12B_COMPARE_FORMAT);
-    // Timer10.resume();
-    //IFX9201_HBridge.begin( DIR_PIN, STP_PIN, DIS_PIN );
+#ifdef USE_SPI_EEPROM
+  EEPROM.begin(SPI_for_flash, PIN_SPI_SS);
+  EEPROM.read(0);
+#endif
 
-    //IFX9201_HBridge.forwards( 50 );       // Same as forwards( )
-    //IFX9201_HBridge.stop( );
-    //IFX9201_HBridge.backwards( 50 );
-    //IFX9201_HBridge.stop( );
+#ifdef USE_I2C_BARO
+  LPS_dev.begin();
+  LPS_Sensor.begin();
+#if (CORE8_VERSION == 23)
+  LPS_Sensor.SetODR(7.0f);
+#endif // CORE8_VERSION
 
-    // TIM_TypeDef *Instance = (TIM_TypeDef *)pinmap_peripheral(digitalPinToPinName(DIS_PIN), PinMap_PWM);
-    // uint32_t channel = STM_PIN_CHANNEL(pinmap_function(digitalPinToPinName(DIS_PIN), PinMap_PWM));
-    //Timer10->setPWM(channel, DIS_PIN, 10, 50, dbwScheduleInterrupt);
-
-    //DBWMotor.begin();
-    //DBWMotor.setSpeed(100);
-  #endif //USE_DBW_IFX9201
+  LPS_Sensor.Enable();
+#endif // USE_I2C_BARO
 
   initialiseAll();
-  
+
   Can0.begin();
   Can0.setBaudRate(500000);
   Can0.enableFIFO();
-  
+
   Can1.begin();
   Can1.setBaudRate(500000);
   Can1.enableFIFO();
 }
-
-#ifdef USE_DBW_IFX9201
-void dbwScheduleInterrupt(){
-  digitalToggle(LED_WARNING);
-}
-#endif //USE_DBW_IFX9201
-
-
 void setPins()
 {
 //******************************************
@@ -310,7 +284,7 @@ void dash_generic(STM32_CAN *can)
     outMsg.buf[6] = lowByte(0x00);                                                     // ECU_OIL_T
     outMsg.buf[7] = highByte(0x00);                                                    // ECU_OIL_T
     can->write(outMsg);
-    
+
     delay(1);
 
     outMsg.id = 0x5F3;
@@ -348,7 +322,7 @@ void dash_generic(STM32_CAN *can)
     outMsg.buf[6] = lowByte(0x00);  // ECU_FUEL_LEV
     outMsg.buf[7] = highByte(0x00); // ECU_FUEL_LEV
     can->write(outMsg);
-    
+
     delay(1);
 
     outMsg.id = 0x5F6;
@@ -424,7 +398,7 @@ void dash_generic(STM32_CAN *can)
     outMsg.buf[6] = lowByte((uint16_t)((currentStatus.injAngle * 100) * 3));  // ECU_IGN_ANG2
     outMsg.buf[7] = highByte((uint16_t)((currentStatus.injAngle * 100) * 3)); // ECU_IGN_ANG2
     can->write(outMsg);
-    
+
     delay(1);
 
     outMsg.id = 0x5FC;
@@ -462,7 +436,7 @@ void dash_generic(STM32_CAN *can)
     outMsg.buf[6] = lowByte(0x00);  // ECC_USER04
     outMsg.buf[7] = highByte(0x00); // ECC_USER04
     can->write(outMsg);
-    
+
     delay(1);
 
     outMsg.id = 0x5FF;
@@ -476,8 +450,18 @@ void dash_generic(STM32_CAN *can)
     outMsg.buf[6] = lowByte(0x00);  // ECC_USER08
     outMsg.buf[7] = highByte(0x00); // ECC_USER08
     can->write(outMsg);
+
+    delay(1);
   }
 }
 
+void doClearFlash(void)
+{
+  digitalWrite(LED_WARNING, HIGH);
+  EEPROM.read(0);
+  EEPROM.clear();
+  digitalWrite(LED_WARNING, LOW);
+  doSystemReset();
+}
 
 #endif
