@@ -60,7 +60,7 @@ void setPins()
   //******** Trigger CONNECTIONS ***************
   //******************************************
 
-  pinTrigger = PE2; //106
+  pinTrigger = PE3; //106
   //pinTrigger2 = PE3;  //107
   //pinTrigger3 = PE4;  //104
   //pinVSS = PE5;       //105
@@ -71,13 +71,13 @@ void setPins()
 
   pinBat = PA0;  //A12
   pinCLT = PA3;  //A7
-  pinTPS = PA2;  //A9
+  pinTPS = PA6;  //A9
   pinIAT = PA4;  //A8
   pinO2 = PC1;   //A13
   //pinO2_2 = PC2; //A14
   //pinBaro = PC5; //A1
   pinMAP = PA5;   //A5
-  pinOilPressure = PA1;  //A0
+  //pinOilPressure = PA1;  //A0
   //pinSpareTemp1 = PC4; //OIL TEMP
   //pinSpareTemp2 =;
   //pinFuelPressure = PC4; //A2
@@ -93,14 +93,14 @@ void setPins()
   //pinInjector5 = PD10; //6
   //pinInjector4 = PD12;  //5
   //pinInjector3 = PG5;//PF14;  //4
-  pinInjector2 = PD13; //71
+  pinInjector2 = PF14; //71
   pinInjector1 = PF13; //70
 
   //******************************************
   //******** COIL CONNECTIONS ***************
   //******************************************
 
-  pinCoil1 = PG0; //59
+  pinCoil1 = PG1; //59
   pinCoil2 = PF15; //58
   //pinCoil3 = PE13; //61
   //pinCoil4 = PE12; //60
@@ -114,9 +114,9 @@ void setPins()
   //******************************************
 
   //pinTachOut = PG5;    //10
-  pinIdle1 = PD11;      //11
+  //pinIdle1 = PD11;      //11
   //pinIdle2 = PG2;       //12
-  pinBoost = PD12;       //13
+  //pinBoost = PD12;       //13
   //pinStepperDir = PG4;  //14
   //pinStepperStep = PG5; //15
   pinFuelPump = PG7;    //16
