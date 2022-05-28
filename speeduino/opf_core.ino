@@ -29,8 +29,8 @@ void setupBoard()
   digitalWrite(LED_COMS, LOW);
 #ifdef USE_SPI_EEPROM
   EEPROM.begin(SPI_for_flash, PIN_SPI_SS);
-#endif
   EEPROM.read(0);
+#endif
 #ifdef USE_I2C_BARO
   LPS_dev.begin();
   LPS_Sensor.begin();
