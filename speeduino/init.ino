@@ -2071,36 +2071,7 @@ void setPinMapping(byte boardID)
       break;
 
     case 51:
-      //Pin mappings as per the teensy revB board shield
-      pinInjector1 = 2; //Output pin injector 1 is on
-      pinInjector2 = 10; //Output pin injector 2 is on
-      pinInjector3 = 6; //Output pin injector 3 is on - NOT USED
-      pinInjector4 = 9; //Output pin injector 4 is on - NOT USED
-      pinCoil1 = 29; //Pin for coil 1
-      pinCoil2 = 30; //Pin for coil 2
-      pinCoil3 = 31; //Pin for coil 3 - ONLY WITH DB2
-      pinCoil4 = 32; //Pin for coil 4 - ONLY WITH DB2
-      pinTrigger = 23; //The CAS pin
-      pinTrigger2 = 36; //The Cam Sensor pin
-      pinTPS = 16; //TPS input pin
-      pinMAP = 17; //MAP sensor pin
-      pinIAT = 14; //IAT sensor pin
-      pinCLT = 15; //CLT sensor pin
-      pinO2 = A22; //O2 sensor pin
-      pinO2_2 = A21; //O2 sensor pin (second sensor)
-      pinBat = 18; //Battery reference voltage pin
-      pinTachOut = 20; //Tacho output pin
-      pinIdle1 = 5; //Single wire idle control
-      pinBoost = 11; //Boost control
-      pinFuelPump = 38; //Fuel pump output
-      pinStepperDir = 34; //Direction pin for DRV8825 driver
-      pinStepperStep = 35; //Step pin for DRV8825 driver
-      pinStepperEnable = 33; //Enable pin for DRV8825 driver
-      pinLaunch = 26; //Can be overwritten below
-      pinFan = 37; //Pin for the fan output - ONLY WITH DB
-      pinSpareHOut1 = 8; // high current output spare1
-      pinSpareHOut2 = 7; // high current output spare2
-      pinSpareLOut1 = 21; //low current output spare1
+      
       break;
     #endif
 

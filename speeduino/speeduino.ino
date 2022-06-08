@@ -89,7 +89,7 @@ uint16_t staged_req_fuel_mult_sec = 0;
 void setup()
 {
   initialisationComplete = false; //Tracks whether the initialiseAll() function has run completely
-  initialiseAll();
+  setupBoard();
 }
 
 inline uint16_t applyFuelTrimToPW(trimTable3d *pTrimTable, int16_t fuelLoad, int16_t RPM, uint16_t currentPW)
@@ -119,7 +119,8 @@ void loop()
 {
       mainLoopCount++;
       LOOP_TIMER = TIMER_mask;
-
+      
+      runLoop();
       //SERIAL Comms
       //Initially check that the last serial send values request is not still outstanding
       if (serialInProgress == true) 
