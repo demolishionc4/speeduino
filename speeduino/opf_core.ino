@@ -14,9 +14,10 @@ LPS22HHSensor LPS_Sensor(&LPS_dev, LPS22HH_I2C_ADD_L);
 
 void setupBoard()
 {
+  configPage2.pinMapping = 60;
+  
   resetPins();
   setPins();
-  configPage2.pinMapping = 60;
 
   // STATUS LED
   pinMode(LED_RUNNING, OUTPUT);
