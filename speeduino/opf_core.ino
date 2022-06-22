@@ -68,12 +68,12 @@ void setPins()
   //******************************************
 
   pinBat = PA0;  //A12
-  pinCLT = PA3;  //A7
-  pinTPS = PA2;  //A9
-  pinIAT = PA4;  //A8
+  pinCLT = PA4;  //A7
+  pinIAT = PA3;  //A8
+  pinTPS = PA1;  //A9
   pinO2 = PC1;   //A13
   pinO2_2 = PC2; //A14
-  pinBaro = PC5; //A1
+  //pinBaro = PC5; //A1
   pinMAP = PA5;   //A5
   pinOilPressure = PA7;  //A0
   //pinSpareTemp1 = PC4; //OIL TEMP
