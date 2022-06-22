@@ -35,7 +35,7 @@
 
 #if defined(STM32F407xx)
   //Comment out this to disable SD logging for STM32 if needed. Currently SD logging for STM32 is experimental feature for F407.
-  #define SD_LOGGING
+  //#define SD_LOGGING
 #endif
 
 #if defined SD_LOGGING
