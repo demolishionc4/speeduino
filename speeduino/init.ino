@@ -1,5 +1,5 @@
 /** @file
- * Speeduino Initialization (called at Arduino setup()).
+ * Speeduino Initialisation (called at Arduino setup()).
  */
 #include "globals.h"
 #include "init.h"
@@ -25,25 +25,25 @@
   #include "rtc_common.h"
 #endif
 
-/** Initialize Speeduino for the main loop.
- * Top level init entrypoint for all initializations:
- * - Intialize and set sizes of 3D tables
+/** Initialise Speeduino for the main loop.
+ * Top level init entry point for all initialisations:
+ * - Initialise and set sizes of 3D tables
  * - Load config from EEPROM, update config structures to current version of SW if needed.
- * - Initialize board (The initBoard() is for board X implemented in board_X.ino file)
- * - Initialize timers (See timers.ino)
+ * - Initialise board (The initBoard() is for board X implemented in board_X.ino file)
+ * - Initialise timers (See timers.ino)
  * - Perform optional SD card and RTC battery inits
- * - Load calibrarion tables from EEPROM
+ * - Load calibration tables from EEPROM
  * - Perform pin mapping (calling @ref setPinMapping() based on @ref config2.pinMapping)
  * - Stop any coil charging and close injectors
- * - Intialize schedulers, Idle, Fan, auxPWM, Corrections, AD-conversions, Programmable I/O
- * - Intialize baro (ambient pressure) by reading MAP (before engine runs)
- * - Intialize triggers (by @ref initialiseTriggers() )
- * - Perform cyl. count based initializations (@ref config2.nCylinders)
+ * - Initialise schedulers, Idle, Fan, auxPWM, Corrections, AD-conversions, Programmable I/O
+ * - Initialise baro (ambient pressure) by reading MAP (before engine runs)
+ * - Initialise triggers (by @ref initialiseTriggers() )
+ * - Perform cyl. count based initialisations (@ref config2.nCylinders)
  * - Perform injection and spark mode based setup
  *   - Assign injector open/close and coil charge begin/end functions to their dedicated global vars
  * - Perform fuel pressure priming by turning fuel pump on
  * - Read CLT and TPS sensors to have cranking pulsewidths computed correctly
- * - Mark Initialization completed (this flag-marking is used in code to prevent after-init changes)
+ * - Mark Initialisation completed (this flag-marking is used in code to prevent after-init changes)
  */
 void initialiseAll()
 {   
@@ -70,7 +70,7 @@ void initialiseAll()
     //only start routine when this pin is low because it is pulled low
     while (digitalRead(EEPROM_RESET_PIN) != HIGH && (millis() - start_time)<1050)
     {
-      //make sure the key is pressed for atleast 0.5 second 
+      //make sure the key is pressed for at least 0.5 second 
       if ((millis() - start_time)>500) {
         //if key is pressed afterboot for 0.5 second make led turn off
         digitalWrite(LED_BUILTIN, HIGH);
@@ -383,14 +383,14 @@ void initialiseAll()
     staged_req_fuel_mult_sec = (100 * totalInjector) / configPage10.stagedInjSizeSec;
     }
 
-    if (configPage4.trigPatternSec == SEC_TRIGGER_POLL)
+    if (configPage4.trigPatternSec == SEC_TRIGGER_POLL && configPage4.TrigPattern == DECODER_MISSING_TOOTH)
     { configPage4.TrigEdgeSec = configPage4.PollLevelPolarity; } // set the secondary trigger edge automatically to correct working value with poll level mode to enable cam angle detection in closed loop vvt.
-    //Explanation: currently cam trigger for VVT is only captured when revolution one == 1. So we need to make sure that the edge trigger happens on the first revoluiton. So now when we set the poll level to be low
+    //Explanation: currently cam trigger for VVT is only captured when revolution one == 1. So we need to make sure that the edge trigger happens on the first revolution. So now when we set the poll level to be low
     //on revolution one and it's checked at tooth #1. This means that the cam signal needs to go high during the first revolution to be high on next revolution at tooth #1. So poll level low = cam trigger edge rising.
 
     //Begin the main crank trigger interrupt pin setup
     //The interrupt numbering is a bit odd - See here for reference: arduino.cc/en/Reference/AttachInterrupt
-    //These assignments are based on the Arduino Mega AND VARY BETWEEN BOARDS. Please confirm the board you are using and update acordingly.
+    //These assignments are based on the Arduino Mega AND VARY BETWEEN BOARDS. Please confirm the board you are using and update accordingly.
     currentStatus.RPM = 0;
     currentStatus.hasSync = false;
     BIT_CLEAR(currentStatus.status3, BIT_STATUS3_HALFSYNC);
@@ -404,7 +404,7 @@ void initialiseAll()
     currentStatus.crankRPM = ((unsigned int)configPage4.crankRPM * 10); //Crank RPM limit (Saves us calculating this over and over again. It's updated once per second in timers.ino)
     currentStatus.fuelPumpOn = false;
     currentStatus.engineProtectStatus = 0;
-    triggerFilterTime = 0; //Trigger filter time is the shortest possible time (in uS) that there can be between crank teeth (ie at max RPM). Any pulses that occur faster than this time will be disgarded as noise. This is simply a default value, the actual values are set in the setup() functinos of each decoder
+    triggerFilterTime = 0; //Trigger filter time is the shortest possible time (in uS) that there can be between crank teeth (ie at max RPM). Any pulses that occur faster than this time will be discarded as noise. This is simply a default value, the actual values are set in the setup() functions of each decoder
     dwellLimit_uS = (1000 * configPage4.dwellLimit);
     currentStatus.nChannels = ((uint8_t)INJ_CHANNELS << 4) + IGN_CHANNELS; //First 4 bits store the number of injection channels, 2nd 4 store the number of ignition channels
     fpPrimeTime = 0;
@@ -421,7 +421,7 @@ void initialiseAll()
     noInterrupts();
     initialiseTriggers();
 
-    //End crank triger interrupt attachment
+    //End crank trigger interrupt attachment
     if(configPage2.strokes == FOUR_STROKE)
     {
       //Default is 1 squirt per revolution, so we halve the given req-fuel figure (Which would be over 2 revolutions)
@@ -429,15 +429,14 @@ void initialiseAll()
     }
 
     //Initial values for loop times
-    previousLoopTime = 0;
     currentLoopTime = micros_safe();
     mainLoopCount = 0;
 
-    currentStatus.nSquirts = configPage2.nCylinders / configPage2.divider; //The number of squirts being requested. This is manaully overriden below for sequential setups (Due to TS req_fuel calc limitations)
-    if(currentStatus.nSquirts == 0) { currentStatus.nSquirts = 1; } //Safety check. Should never happen as TS will give an error, but leave incase tune is manually altered etc. 
+    currentStatus.nSquirts = configPage2.nCylinders / configPage2.divider; //The number of squirts being requested. This is manually overridden below for sequential setups (Due to TS req_fuel calc limitations)
+    if(currentStatus.nSquirts == 0) { currentStatus.nSquirts = 1; } //Safety check. Should never happen as TS will give an error, but leave in case tune is manually altered etc. 
 
     //Calculate the number of degrees between cylinders
-    //Swet some default values. These will be updated below if required. 
+    //Set some default values. These will be updated below if required.
     CRANK_ANGLE_MAX = 720;
     CRANK_ANGLE_MAX_IGN = 360;
     CRANK_ANGLE_MAX_INJ = 360;
@@ -495,7 +494,7 @@ void initialiseAll()
         if (configPage2.engineType == EVEN_FIRE ) { channel2IgnDegrees = 180; }
         else { channel2IgnDegrees = configPage2.oddfire2; }
 
-        //Sequential ignition works identically on a 2 cylinder whether it's odd or even fire (With the default being a 180 degree second cylinder). 
+        //Sequential ignition works identically on a 2 cylinder whether it's odd or even fire (With the default being a 180 degree second cylinder).
         if( (configPage4.sparkMode == IGN_MODE_SEQUENTIAL) && (configPage2.strokes == FOUR_STROKE) ) { CRANK_ANGLE_MAX_IGN = 720; }
 
         if ( (configPage2.injLayout == INJ_SEQUENTIAL) && (configPage2.strokes == FOUR_STROKE) )
@@ -534,7 +533,7 @@ void initialiseAll()
         maxIgnOutputs = 3;
         if (configPage2.engineType == EVEN_FIRE )
         {
-        //Sequential and Single channel modes both run over 720 crank degrees, but only on 4 stroke engines. 
+        //Sequential and Single channel modes both run over 720 crank degrees, but only on 4 stroke engines.
         if( ( (configPage4.sparkMode == IGN_MODE_SEQUENTIAL) || (configPage4.sparkMode == IGN_MODE_SINGLE) ) && (configPage2.strokes == FOUR_STROKE) )
         {
           channel2IgnDegrees = 240;
@@ -1100,7 +1099,7 @@ void initialiseAll()
         }
         else
         {
-          //If the person has inadvertantly selected this when running more than 4 cylinders or other than 6 cylinders, just use standard Wasted spark mode
+          //If the person has inadvertently selected this when running more than 4 cylinders or other than 6 cylinders, just use standard Wasted spark mode
           ign1StartFunction = beginCoil1Charge;
           ign1EndFunction = endCoil1Charge;
           ign2StartFunction = beginCoil2Charge;
@@ -1215,9 +1214,9 @@ void initialiseAll()
     initialisationComplete = true;
     digitalWrite(LED_BUILTIN, HIGH);
 }
-/** Set board / microcontroller specfic pin mappings / assignments.
+/** Set board / microcontroller specific pin mappings / assignments.
  * The boardID is switch-case compared against raw boardID integers (not enum or defined label, and probably no need for that either)
- * which are originated from tuning SW (e.g. TS) set values and are avilable in reference/speeduino.ini (See pinLayout, note also that
+ * which are originated from tuning SW (e.g. TS) set values and are available in reference/speeduino.ini (See pinLayout, note also that
  * numbering is not contiguous here).
  */
 void setPinMapping(byte boardID)
@@ -1702,7 +1701,7 @@ void setPinMapping(byte boardID)
       pinDisplayReset = 48; // OLED reset pin
       pinSpareTemp1 = A6;
       pinSpareTemp2 = A5;
-      pinTachOut = 41; //Tacho output pin transistori puuttuu 2n2222 tähän ja 1k 12v
+      pinTachOut = 41; //Tacho output pin transistor is missing 2n2222 for this and 1k for 12v
       pinFuelPump = 42; //Fuel pump output 2n2222
       pinFan = 47; //Pin for the fan output
       pinTachOut = 49; //Tacho output pin
@@ -1814,6 +1813,7 @@ void setPinMapping(byte boardID)
       pinTrigger3 = 20; //The Cam sensor 2 pin
       pinTPS = A2;//TPS input pin
       pinMAP = A3; //MAP sensor pin
+      pinEMAP = A15; //EMAP sensor pin
       pinIAT = A0; //IAT sensor pin
       pinCLT = A1; //CLT sensor pin
       pinO2 = A8; //O2 Sensor pin
@@ -1835,6 +1835,11 @@ void setPinMapping(byte boardID)
       pinFlex = 2; // Flex sensor
       pinResetControl = 43; //Reset control output
       pinVSS = 3; //VSS input pin
+      pinWMIEmpty = 31; //(placeholder)
+      pinWMIIndicator = 33; //(placeholder)
+      pinWMIEnabled = 35; //(placeholder)
+      pinIdleUp = 37; //(placeholder)
+      pinCTPS = A6; //(placeholder)
      #elif defined(STM32F407xx)
       pinInjector1 = PB15; //Output pin injector 1
       pinInjector2 = PB14; //Output pin injector 2
@@ -1856,6 +1861,7 @@ void setPinMapping(byte boardID)
       pinTrigger2 = PD4; //The Cam Sensor pin
       pinTPS = PA2;//TPS input pin
       pinMAP = PA3; //MAP sensor pin
+      pinEMAP = PC5; //EMAP sensor pin
       pinIAT = PA0; //IAT sensor pin
       pinCLT = PA1; //CLS sensor pin
       pinO2 = PB0; //O2 Sensor pin
@@ -1877,6 +1883,11 @@ void setPinMapping(byte boardID)
       pinFlex = PD7; // Flex sensor
       pinResetControl = PB7; //Reset control output
       pinVSS = PB6; //VSS input pin
+      pinWMIEmpty = PD15; //(placeholder)
+      pinWMIIndicator = PD13; //(placeholder)
+      pinWMIEnabled = PE15; //(placeholder)
+      pinIdleUp = PE14; //(placeholder)
+      pinCTPS = PA6; //(placeholder)
      #endif
       break;
 
@@ -2024,62 +2035,18 @@ void setPinMapping(byte boardID)
     #if defined(CORE_TEENSY35)
     case 50:
       //Pin mappings as per the teensy rev A shield
-      pinInjector1 = 8; //Output pin injector 1 is on
-      pinInjector2 = 9; //Output pin injector 2 is on
-      pinInjector3 = 5; //Output pin injector 3 is on
-      pinInjector4 = 2; //Output pin injector 4 is on
-      pinInjector5 = 12; //Output pin injector 5 is on
-      pinInjector6 = 27; //Output pin injector 6 is on
-      pinInjector7 = 24; //Output pin injector 7 is on
-      pinInjector8 = 25; //Output pin injector 8 is on
+      pinInjector1 = 2; //Output pin injector 1 is on
+      pinInjector2 = 10; //Output pin injector 2 is on
+      pinInjector3 = 6; //Output pin injector 3 is on
+      pinInjector4 = 9; //Output pin injector 4 is on
       //Placeholder only - NOT USED:
       //pinInjector5 = 13;
       pinCoil1 = 29; //Pin for coil 1
       pinCoil2 = 30; //Pin for coil 2
-      pinCoil3 = 31; //Pin for coil 3
-      pinCoil4 = 32; //Pin for coil 4
-      pinCoil5 = 28; //Pin for coil 5
-      pinCoil6 = 14; //Pin for coil 6
-      pinCoil7 = 39; //Pin for coil 7
-      pinCoil8 = 22; //Pin for coil 8
-      //Placeholder only - NOT USED:
-      //pinCoil5 = 46; 
-      pinTrigger = 23; //The CAS pin
-      pinTrigger2 = 36; //The Cam Sensor pin
-      pinTPS = A2; //TPS input pin
-      pinMAP = A3; //MAP sensor pin
-      pinIAT = A11; //IAT sensor pin
-      pinCLT = A10; //CLT sensor pin
-      pinO2 = A22; //O2 sensor pin
-      pinO2_2 = A21; //O2 sensor pin (second sensor)
-      pinBat = A1; //Battery reference voltage pin
-      pinOilPressure = A24; //Oil Pressure
-      pinTachOut = 21; //Tacho output pin
-      pinIdle1 = 10; //Single wire idle control
-      pinBoost = 11; //Boost control
-      pinFuelPump = 38; //Fuel pump output
-      pinStepperDir = 13; //Direction pin for DRV8825 driver
-      pinStepperStep = 35; //Step pin for DRV8825 driver
-      //pinStepperEnable = 33; //Enable pin for DRV8825 driver
-      pinLaunch = 26; //Can be overwritten below
-      pinFan = 37; //Pin for the fan output - ONLY WITH DB
-      pinSpareHOut1 = 6; // high current output spare1
-      pinSpareHOut2 = 7; // high current output spare2
-      pinSpareLOut1 = 20; //low current output spare1
-      
-      pinVSS = 52; //VSS input
-      break;
-
-    case 51:
-      //Pin mappings as per the teensy revB board shield
-      pinInjector1 = 2; //Output pin injector 1 is on
-      pinInjector2 = 10; //Output pin injector 2 is on
-      pinInjector3 = 6; //Output pin injector 3 is on - NOT USED
-      pinInjector4 = 9; //Output pin injector 4 is on - NOT USED
-      pinCoil1 = 29; //Pin for coil 1
-      pinCoil2 = 30; //Pin for coil 2
       pinCoil3 = 31; //Pin for coil 3 - ONLY WITH DB2
       pinCoil4 = 32; //Pin for coil 4 - ONLY WITH DB2
+      //Placeholder only - NOT USED:
+      //pinCoil5 = 46; 
       pinTrigger = 23; //The CAS pin
       pinTrigger2 = 36; //The Cam Sensor pin
       pinTPS = 16; //TPS input pin
@@ -2101,6 +2068,10 @@ void setPinMapping(byte boardID)
       pinSpareHOut1 = 8; // high current output spare1
       pinSpareHOut2 = 7; // high current output spare2
       pinSpareLOut1 = 21; //low current output spare1
+      break;
+
+    case 51:
+      
       break;
     #endif
 
@@ -2222,9 +2193,233 @@ void setPinMapping(byte boardID)
 
       #endif
       break;
+
+    case 56:
+      #if defined(CORE_TEENSY)
+      //Pin mappings for the Bear Cub (Teensy 4.1)
+      pinInjector1 = 6;
+      pinInjector2 = 7;
+      pinInjector3 = 9;
+      pinInjector4 = 8;
+      pinInjector5 = 0; //Not used
+      pinCoil1 = 2;
+      pinCoil2 = 3;
+      pinCoil3 = 4;
+      pinCoil4 = 5;
+
+      pinTrigger = 20; //The CAS pin
+      pinTrigger2 = 21; //The Cam Sensor pin
+      pinFlex = 37; // Flex sensor
+      pinMAP = A5; //MAP sensor pin
+      pinBaro = A4; //Baro sensor pin
+      pinBat = A15; //Battery reference voltage pin
+      pinTPS = A3; //TPS input pin
+      pinIAT = A0; //IAT sensor pin
+      pinCLT = A1; //CLS sensor pin
+      pinO2 = A2; //O2 Sensor pin
+      pinLaunch = 36;
+
+      pinSpareTemp1 = A16; //spare Analog input 1
+      pinSpareTemp2 = A17; //spare Analog input 2
+      pinTachOut = 38; //Tacho output pin
+      pinIdle1 = 27; //Single wire idle control
+      pinIdle2 = 26; //2 wire idle control. Shared with Spare 1 output
+      pinFuelPump = 10; //Fuel pump output
+      pinVVT_1 = 28; //Default VVT output
+      pinStepperDir = 32; //Direction pin  for DRV8825 driver
+      pinStepperStep = 31; //Step pin for DRV8825 driver
+      pinStepperEnable = 30; //Enable pin for DRV8825 driver
+      pinBoost = 24; //Boost control
+      pinSpareLOut1 = 29; //low current output spare1
+      pinSpareLOut2 = 26; //low current output spare2
+      pinSpareLOut3 = 28; //low current output spare3
+      pinSpareLOut4 = 29; //low current output spare4
+      pinFan = 25; //Pin for the fan output
+      pinResetControl = 46; //Reset control output PLACEHOLDER value for now
+
+      #endif
+      break;
     
  
     case 60:
+        #if defined(STM32F407xx)
+        //Pin definitions for experimental board Tjeerd 
+        //Black F407VE wiki.stm32duino.com/index.php?title=STM32F407
+        //https://github.com/Tjeerdie/SPECTRE/tree/master/SPECTRE_V0.5
+        
+        //******************************************
+        //******** PORTA CONNECTIONS *************** 
+        //******************************************
+        // = PA0; //Wakeup ADC123
+        // = PA1; //ADC123
+        // = PA2; //ADC123
+        // = PA3; //ADC123
+        // = PA4; //ADC12
+        // = PA5; //ADC12
+        // = PA6; //ADC12 LED_BUILTIN_1
+        // = PA7; //ADC12 LED_BUILTIN_2
+        pinCoil3 = PA8;
+        // = PA9;  //TXD1=Bluetooth module
+        // = PA10; //RXD1=Bluetooth module
+        // = PA11; //(DO NOT USE FOR SPEEDUINO) USB
+        // = PA12; //(DO NOT USE FOR SPEEDUINO) USB 
+        // = PA13;  //(DO NOT USE FOR SPEEDUINO) NOT ON GPIO - DEBUG ST-LINK
+        // = PA14;  //(DO NOT USE FOR SPEEDUINO) NOT ON GPIO - DEBUG ST-LINK
+        // = PA15;  //(DO NOT USE FOR SPEEDUINO) NOT ON GPIO - DEBUG ST-LINK
+
+        //******************************************
+        //******** PORTB CONNECTIONS *************** 
+        //******************************************
+        // = PB0;  //(DO NOT USE FOR SPEEDUINO) ADC123 - SPI FLASH CHIP CS pin
+        pinBaro = PB1; //ADC12
+        // = PB2;  //(DO NOT USE FOR SPEEDUINO) BOOT1 
+        // = PB3;  //(DO NOT USE FOR SPEEDUINO) SPI1_SCK FLASH CHIP
+        // = PB4;  //(DO NOT USE FOR SPEEDUINO) SPI1_MISO FLASH CHIP
+        // = PB5;  //(DO NOT USE FOR SPEEDUINO) SPI1_MOSI FLASH CHIP
+        // = PB6;  //NRF_CE
+        // = PB7;  //NRF_CS
+        // = PB8;  //NRF_IRQ
+        pinCoil2 = PB9; //
+        // = PB9;  //
+        // = PB10; //TXD3
+        // = PB11; //RXD3
+        // = PB12; //
+        // = PB13;  //SPI2_SCK
+        // = PB14;  //SPI2_MISO
+        // = PB15;  //SPI2_MOSI
+
+        //******************************************
+        //******** PORTC CONNECTIONS *************** 
+        //******************************************
+        pinIAT = PC0; //ADC123 
+        pinTPS = PC1; //ADC123
+        pinMAP = PC2; //ADC123 
+        pinCLT = PC3; //ADC123
+        pinO2 = PC4; //ADC12
+        pinBat = PC5;  //ADC12
+        pinBoost = PC6; //
+        pinIdle1 = PC7; //
+        // = PC8;  //(DO NOT USE FOR SPEEDUINO) - SDIO_D0
+        // = PC9;  //(DO NOT USE FOR SPEEDUINO) - SDIO_D1
+        // = PC10;  //(DO NOT USE FOR SPEEDUINO) - SDIO_D2
+        // = PC11;  //(DO NOT USE FOR SPEEDUINO) - SDIO_D3
+        // = PC12;  //(DO NOT USE FOR SPEEDUINO) - SDIO_SCK
+        pinTachOut = PC13; //
+        // = PC14;  //(DO NOT USE FOR SPEEDUINO) - OSC32_IN
+        // = PC15;  //(DO NOT USE FOR SPEEDUINO) - OSC32_OUT
+
+        //******************************************
+        //******** PORTD CONNECTIONS *************** 
+        //******************************************
+        // = PD0;  //CANRX
+        // = PD1;  //CANTX
+        // = PD2;  //(DO NOT USE FOR SPEEDUINO) - SDIO_CMD
+        pinIdle2 = PD3; //
+        // = PD4;  //
+        pinFlex = PD4;
+        // = PD5; //TXD2
+        // = PD6;  //RXD2
+        pinCoil1 = PD7; //
+        // = PD7;  //
+        // = PD8;  //
+        pinCoil5 = PD9;//
+        pinCoil4 = PD10;//
+        // = PD11;  //
+        pinInjector1 = PD12; //
+        pinInjector2 = PD13; //
+        pinInjector3 = PD14; //
+        pinInjector4 = PD15; //
+
+        //******************************************
+        //******** PORTE CONNECTIONS *************** 
+        //******************************************
+        pinTrigger = PE0; //
+        pinTrigger2 = PE1; //
+        pinStepperEnable = PE2; //
+        pinFuelPump = PE3; //ONBOARD KEY1
+        // = PE4;  //ONBOARD KEY2
+        pinStepperStep = PE5; //
+        pinFan = PE6; //
+        pinStepperDir = PE7; //
+        // = PE8;  //
+        pinInjector5 = PE9; //
+        // = PE10;  //
+        pinInjector6 = PE11; //
+        // = PE12; //
+        pinInjector8 = PE13; //
+        pinInjector7 = PE14; //
+        // = PE15;  //
+     #elif (defined(STM32F411xE) || defined(STM32F401xC))
+        //pins PA12, PA11 are used for USB or CAN couldn't be used for GPIO
+        //PB2 can't be used as input because is BOOT pin
+        pinInjector1 = PB7; //Output pin injector 1 is on
+        pinInjector2 = PB6; //Output pin injector 2 is on
+        pinInjector3 = PB5; //Output pin injector 3 is on
+        pinInjector4 = PB4; //Output pin injector 4 is on
+        pinCoil1 = PB9; //Pin for coil 1
+        pinCoil2 = PB8; //Pin for coil 2
+        pinCoil3 = PB3; //Pin for coil 3
+        pinCoil4 = PA15; //Pin for coil 4
+        pinTPS = A2;//TPS input pin
+        pinMAP = A3; //MAP sensor pin
+        pinIAT = A0; //IAT sensor pin
+        pinCLT = A1; //CLS sensor pin
+        pinO2 = A8; //O2 Sensor pin
+        pinBat = A4; //Battery reference voltage pin
+        pinBaro = pinMAP;
+        pinTachOut = PB1; //Tacho output pin  (Goes to ULN2803)
+        pinIdle1 = PB2; //Single wire idle control
+        pinIdle2 = PB10; //2 wire idle control
+        pinBoost = PA6; //Boost control
+        pinStepperDir = PB10; //Direction pin  for DRV8825 driver
+        pinStepperStep = PB2; //Step pin for DRV8825 driver
+        pinFuelPump = PA8; //Fuel pump output
+        pinFan = PA5; //Pin for the fan output (Goes to ULN2803)
+
+        //external interrupt enabled pins
+        pinFlex = PC14; // Flex sensor (Must be external interrupt enabled)
+        pinTrigger = PC13; //The CAS pin also led pin so bad idea
+        pinTrigger2 = PC15; //The Cam Sensor pin
+
+     #elif defined(CORE_STM32)
+        //blue pill wiki.stm32duino.com/index.php?title=Blue_Pill
+        //Maple mini wiki.stm32duino.com/index.php?title=Maple_Mini
+        //pins PA12, PA11 are used for USB or CAN couldn't be used for GPIO
+        //PB2 can't be used as input because is BOOT pin
+        pinInjector1 = PB7; //Output pin injector 1 is on
+        pinInjector2 = PB6; //Output pin injector 2 is on
+        pinInjector3 = PB5; //Output pin injector 3 is on
+        pinInjector4 = PB4; //Output pin injector 4 is on
+        pinCoil1 = PB3; //Pin for coil 1
+        pinCoil2 = PA15; //Pin for coil 2
+        pinCoil3 = PA14; //Pin for coil 3
+        pinCoil4 = PA9; //Pin for coil 4
+        pinCoil5 = PA8; //Pin for coil 5
+        pinTPS = A0; //TPS input pin
+        pinMAP = A1; //MAP sensor pin
+        pinIAT = A2; //IAT sensor pin
+        pinCLT = A3; //CLS sensor pin
+        pinO2 = A4; //O2 Sensor pin
+        pinBat = A5; //Battery reference voltage pin
+        pinBaro = pinMAP;
+        pinIdle1 = PB2; //Single wire idle control
+        pinIdle2 = PA2; //2 wire idle control
+        pinBoost = PA1; //Boost control
+        pinVVT_1 = PA0; //Default VVT output
+        pinVVT_2 = PA2; //Default VVT2 output
+        pinStepperDir = PC15; //Direction pin  for DRV8825 driver
+        pinStepperStep = PC14; //Step pin for DRV8825 driver
+        pinStepperEnable = PC13; //Enable pin for DRV8825
+        pinDisplayReset = PB2; // OLED reset pin
+        pinFan = PB1; //Pin for the fan output
+        pinFuelPump = PB11; //Fuel pump output
+        pinTachOut = PB10; //Tacho output pin
+        //external interrupt enabled pins
+        pinFlex = PB8; // Flex sensor (Must be external interrupt enabled)
+        pinTrigger = PA10; //The CAS pin
+        pinTrigger2 = PA13; //The Cam Sensor pin
+      
+    #endif
       break;
     default:
       #if defined(STM32F407xx)
@@ -2619,9 +2814,9 @@ void setPinMapping(byte boardID)
   flex_pin_mask = digitalPinToBitMask(pinFlex);
 
 }
-/** Initialize the chosen trigger decoder.
- * - Set Interrput numbers @ref triggerInterrupt, @ref triggerInterrupt2 and @ref triggerInterrupt3  by pin their numbers (based on board CORE_* define)
- * - Call decoder specific setup function triggerSetup_*() (by @ref config4.TrigPattern, set to one of the DECODER_* defines) and do any additional initializations needed.
+/** Initialise the chosen trigger decoder.
+ * - Set Interrupt numbers @ref triggerInterrupt, @ref triggerInterrupt2 and @ref triggerInterrupt3  by pin their numbers (based on board CORE_* define)
+ * - Call decoder specific setup function triggerSetup_*() (by @ref config4.TrigPattern, set to one of the DECODER_* defines) and do any additional initialisations needed.
  * 
  * @todo Explain why triggerSetup_*() alone cannot do all the setup, but there's ~10+ lines worth of extra init for each of decoders.
  */
@@ -3108,6 +3303,19 @@ void initialiseTriggers()
       attachInterrupt(triggerInterrupt2, triggerSecondaryHandler, secondaryTriggerEdge);
       break;
 
+    case DECODER_VMAX:
+      triggerSetup_Vmax();
+      triggerHandler = triggerPri_Vmax;
+      getRPM = getRPM_Vmax;
+      getCrankAngle = getCrankAngle_Vmax;
+      triggerSetEndTeeth = triggerSetEndTeeth_Vmax;
+
+      if(configPage4.TrigEdge == 0) { primaryTriggerEdge = true; } // set as boolean so we can directly use it in decoder.
+      else { primaryTriggerEdge = false; }
+      
+      attachInterrupt(triggerInterrupt, triggerHandler, CHANGE); //Hardcoded change, the primaryTriggerEdge will be used in the decoder to select if it`s an inverted or non-inverted signal.
+      break;
+
     default:
       triggerHandler = triggerPri_missingTooth;
       getRPM = getRPM_missingTooth;
@@ -3116,5 +3324,198 @@ void initialiseTriggers()
       if(configPage4.TrigEdge == 0) { attachInterrupt(triggerInterrupt, triggerHandler, RISING); } // Attach the crank trigger wheel interrupt (Hall sensor drags to ground when triggering)
       else { attachInterrupt(triggerInterrupt, triggerHandler, FALLING); }
       break;
+  }
+}
+
+/** Change injectors or/and ignition angles to 720deg.
+ * Roll back req_fuel size and set number of outputs equal to cylinder count.
+* */
+void changeHalfToFullSync(void)
+{
+  //Need to do another check for injLayout as this function can be called from ignition
+  if( (configPage2.injLayout == INJ_SEQUENTIAL) && (CRANK_ANGLE_MAX_INJ != 720) )
+  {
+    CRANK_ANGLE_MAX_INJ = 720;
+    maxIgnOutputs = configPage2.nCylinders;
+    req_fuel_uS *= 2;
+    
+    inj1StartFunction = openInjector1;
+    inj1EndFunction = closeInjector1;
+    inj2StartFunction = openInjector2;
+    inj2EndFunction = closeInjector2;
+    inj3StartFunction = openInjector3;
+    inj3EndFunction = closeInjector3;
+    inj4StartFunction = openInjector4;
+    inj4EndFunction = closeInjector4;
+    inj5StartFunction = openInjector5;
+    inj5EndFunction = closeInjector5;
+    inj6StartFunction = openInjector6;
+    inj6EndFunction = closeInjector6;
+    inj7StartFunction = openInjector7;
+    inj7EndFunction = closeInjector7;
+    inj8StartFunction = openInjector8;
+    inj8EndFunction = closeInjector8;
+
+    switch (configPage2.nCylinders)
+    {
+      case 4:
+        channel3InjEnabled = true;
+        channel4InjEnabled = true;
+        break;
+            
+      case 6:
+        channel4InjEnabled = true;
+        channel5InjEnabled = true;
+        channel6InjEnabled = true;
+        break;
+
+      case 8:
+        channel5InjEnabled = true;
+        channel6InjEnabled = true;
+        channel7InjEnabled = true;
+        channel8InjEnabled = true;
+        break;
+
+      default:
+        break; //No actions required for other cylinder counts
+
+    }
+  }
+
+  //Need to do another check for sparkMode as this function can be called from injection
+  if( (configPage4.sparkMode == IGN_MODE_SEQUENTIAL) && (CRANK_ANGLE_MAX_IGN != 720) )
+  {
+    CRANK_ANGLE_MAX_IGN = 720;
+    maxIgnOutputs = configPage2.nCylinders;
+    switch (configPage2.nCylinders)
+    {
+    case 4:
+      ign1StartFunction = beginCoil1Charge;
+      ign1EndFunction = endCoil1Charge;
+      ign2StartFunction = beginCoil2Charge;
+      ign2EndFunction = endCoil2Charge;
+      break;
+
+    case 6:
+      ign1StartFunction = beginCoil1Charge;
+      ign1EndFunction = endCoil1Charge;
+      ign2StartFunction = beginCoil2Charge;
+      ign2EndFunction = endCoil2Charge;
+      ign3StartFunction = beginCoil3Charge;
+      ign3EndFunction = endCoil3Charge;
+      break;
+
+    case 8:
+      ign1StartFunction = beginCoil1Charge;
+      ign1EndFunction = endCoil1Charge;
+      ign2StartFunction = beginCoil2Charge;
+      ign2EndFunction = endCoil2Charge;
+      ign3StartFunction = beginCoil3Charge;
+      ign3EndFunction = endCoil3Charge;
+      ign4StartFunction = beginCoil4Charge;
+      ign4EndFunction = endCoil4Charge;
+      break;
+
+    default:
+      break; //No actions required for other cylinder counts
+      
+    }
+  }
+}
+
+/** Change injectors or/and ignition angles to 360deg.
+ * In semi sequentiol mode req_fuel size is half.
+ * Set number of outputs equal to half cylinder count.
+* */
+void changeFullToHalfSync(void)
+{
+  if(configPage2.injLayout == INJ_SEQUENTIAL)
+  {
+    CRANK_ANGLE_MAX_INJ = 360;
+    maxIgnOutputs = configPage2.nCylinders / 2;
+    req_fuel_uS /= 2;
+    switch (configPage2.nCylinders)
+    {
+      case 4:
+        if(configPage4.inj4cylPairing == INJ_PAIR_13_24)
+        {
+          inj1StartFunction = openInjector1and3;
+          inj1EndFunction = closeInjector1and3;
+          inj2StartFunction = openInjector2and4;
+          inj2EndFunction = closeInjector2and4;
+        }
+        else
+        {
+          inj1StartFunction = openInjector1and4;
+          inj1EndFunction = closeInjector1and4;
+          inj2StartFunction = openInjector2and3;
+          inj2EndFunction = closeInjector2and3;
+        }
+        channel3InjEnabled = false;
+        channel4InjEnabled = false;
+        break;
+            
+      case 6:
+        inj1StartFunction = openInjector1and4;
+        inj1EndFunction = closeInjector1and4;
+        inj2StartFunction = openInjector2and5;
+        inj2EndFunction = closeInjector2and5;
+        inj3StartFunction = openInjector3and6;
+        inj3EndFunction = closeInjector3and6;
+        channel4InjEnabled = false;
+        channel5InjEnabled = false;
+        channel6InjEnabled = false;
+        break;
+
+      case 8:
+        inj1StartFunction = openInjector1and5;
+        inj1EndFunction = closeInjector1and5;
+        inj2StartFunction = openInjector2and6;
+        inj2EndFunction = closeInjector2and6;
+        inj3StartFunction = openInjector3and7;
+        inj3EndFunction = closeInjector3and7;
+        inj4StartFunction = openInjector4and8;
+        inj4EndFunction = closeInjector4and8;
+        channel5InjEnabled = false;
+        channel6InjEnabled = false;
+        channel7InjEnabled = false;
+        channel8InjEnabled = false;
+        break;
+    }
+  }
+
+  if(configPage4.sparkMode == IGN_MODE_SEQUENTIAL)
+  {
+    CRANK_ANGLE_MAX_IGN = 360;
+    maxIgnOutputs = configPage2.nCylinders / 2;
+    switch (configPage2.nCylinders)
+    {
+      case 4:
+        ign1StartFunction = beginCoil1and3Charge;
+        ign1EndFunction = endCoil1and3Charge;
+        ign2StartFunction = beginCoil2and4Charge;
+        ign2EndFunction = endCoil2and4Charge;
+        break;
+            
+      case 6:
+        ign1StartFunction = beginCoil1and4Charge;
+        ign1EndFunction = endCoil1and4Charge;
+        ign2StartFunction = beginCoil2and5Charge;
+        ign2EndFunction = endCoil2and5Charge;
+        ign3StartFunction = beginCoil3and6Charge;
+        ign3EndFunction = endCoil3and6Charge;
+        break;
+
+      case 8:
+        ign1StartFunction = beginCoil1and5Charge;
+        ign1EndFunction = endCoil1and5Charge;
+        ign2StartFunction = beginCoil2and6Charge;
+        ign2EndFunction = endCoil2and6Charge;
+        ign3StartFunction = beginCoil3and7Charge;
+        ign3EndFunction = endCoil3and7Charge;
+        ign4StartFunction = beginCoil4and8Charge;
+        ign4EndFunction = endCoil4and8Charge;
+        break;
+    }
   }
 }

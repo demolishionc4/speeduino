@@ -3,123 +3,87 @@
 
 #include "opf_core.h"
 
-#ifdef USE_I2C_BARO
-TwoWire LPS_dev(PIN_WIRE_SDA, PIN_WIRE_SCL);
-#if (CORE8_VERSION == 23)
-LPS25HBSensor LPS_Sensor(&LPS_dev, LPS25HB_ADDRESS_LOW);
-#else
-LPS22HHSensor LPS_Sensor(&LPS_dev, LPS22HH_I2C_ADD_L);
-#endif // CORE8_VERSION
-#endif // USE_I2C_BARO
-
 void setupBoard()
 {
-  configPage2.pinMapping = 60;
-  
+  configPage2.pinMapping = 51;
+
+  //STATUS LED
+  pinMode(LED_BUILTIN, OUTPUT);
+  digitalWrite(LED_BUILTIN, LOW);
+
   resetPins();
   setPins();
-
-  // STATUS LED
-  pinMode(LED_RUNNING, OUTPUT);
-  digitalWrite(LED_RUNNING, LOW);
-  pinMode(LED_WARNING, OUTPUT);
-  digitalWrite(LED_WARNING, LOW);
-  pinMode(LED_ALERT, OUTPUT);
-  digitalWrite(LED_ALERT, LOW);
-  pinMode(LED_COMS, OUTPUT);
-  digitalWrite(LED_COMS, LOW);
-#ifdef USE_SPI_EEPROM
-  EEPROM.begin(SPI_for_flash, PIN_SPI_SS);
-  EEPROM.read(0);
-#endif
-#ifdef USE_I2C_BARO
-  LPS_dev.begin();
-  LPS_Sensor.begin();
-#if (CORE8_VERSION == 23)
-  LPS_Sensor.SetODR(7.0f);
-#endif // CORE8_VERSION
-
-  LPS_Sensor.Enable();
-#endif // USE_I2C_BARO
-
   initialiseAll();
-
-  Can0.begin();
-  Can0.setBaudRate(500000);
-  Can0.enableFIFO();
-
-  Can1.begin();
-  Can1.setBaudRate(500000);
-  Can1.enableFIFO();
+  
 }
+
 void setPins()
 {
-//******************************************
-  //******** Trigger CONNECTIONS ***************
-  //******************************************
 
-  pinTrigger = PE2; //106
-  //pinTrigger2 = PE3;  //107
-  //pinTrigger3 = PE4;  //104
-  //pinVSS = PE5;       //105
+  // //******************************************
+  // //******** Trigger CONNECTIONS ***************
+  // //******************************************
 
-  //******************************************
-  //******** ANALOG CONNECTIONS ***************
-  //******************************************
+  pinTrigger = 47; //106
+  pinTrigger2 = 48;  //107
+  // pinTrigger3 = PE4;  //104
+  // pinVSS = PE5;       //105
 
-  pinBat = PA0;  //A12
-  pinCLT = PA3;  //A7
-  pinTPS = PA2;  //A9
-  pinIAT = PA4;  //A8
-  pinO2 = PC1;   //A13
+  // //******************************************
+  // //******** ANALOG CONNECTIONS ***************
+  // //******************************************
+
+  pinBat = 49;  //A12
+  pinCLT = A10;  //A7
+  pinTPS = 21;  //A9
+  pinIAT = A11;  //A8
+  pinO2 = 22;   //A13
   //pinO2_2 = PC2; //A14
-  //pinBaro = PC5; //A1
-  pinMAP = PA5;   //A5
-  pinOilPressure = PA1;  //A0
+  pinBaro = A2; //A1
+  pinMAP = A24;   //A5
+  pinOilPressure = A0;  //A0
   //pinSpareTemp1 = PC4; //OIL TEMP
-  //pinSpareTemp2 =;
-  //pinFuelPressure = PC4; //A2
-  //pinFuel = PC4; //A2
+  pinFuelPressure = A1; //A2
 
-  //******************************************
-  //******** INJECTOR CONNECTIONS ***************
-  //******************************************
+  // //******************************************
+  // //******** INJECTOR CONNECTIONS ***************
+  // //******************************************
 
-  //pinInjector8 = PD11; //9
-  //pinInjector7 = PD12; //8
-  //pinInjector6 = PD11; //7
-  //pinInjector5 = PD10; //6
-  //pinInjector4 = PD12;  //5
-  //pinInjector3 = PG5;//PF14;  //4
-  pinInjector2 = PD13; //71
-  pinInjector1 = PF13; //70
+  pinInjector8 = 43; //9
+  pinInjector7 = 44; //8
+  pinInjector6 = 45; //7
+  pinInjector5 = 46; //6
+  pinInjector4 = 29;  //5
+  pinInjector3 = 30;  //4
+  pinInjector2 = 31; //71
+  pinInjector1 = 32; //70
 
-  //******************************************
-  //******** COIL CONNECTIONS ***************
-  //******************************************
+  // //******************************************
+  // //******** COIL CONNECTIONS ***************
+  // //******************************************
 
-  pinCoil1 = PG0; //59
-  pinCoil2 = PF15; //58
-  //pinCoil3 = PE13; //61
-  //pinCoil4 = PE12; //60
-  //pinCoil5 = PE11; //63
-  //pinCoil6 = PF15; //68
-  //pinCoil7 = PG0;  //69
-  //pinCoil8 = PG1;  //66
+  pinCoil1 = 27; //59
+  pinCoil2 = 28; //58
+  pinCoil3 = 25; //61
+  pinCoil4 = 26; //60
+  pinCoil5 = 41; //63
+  pinCoil6 = 40; //68
+  pinCoil7 = 24;  //69
+  pinCoil8 = 42;  //66
 
-  //******************************************
-  //******** OTHER CONNECTIONS ***************
-  //******************************************
+  // //******************************************
+  // //******** OTHER CONNECTIONS ***************
+  // //******************************************
 
-  //pinTachOut = PG5;    //10
-  pinIdle1 = PD11;      //11
+  pinTachOut = 2;    //10
+  pinIdle1 = 5;      //11
   //pinIdle2 = PG2;       //12
-  pinBoost = PD12;       //13
-  //pinStepperDir = PG4;  //14
-  //pinStepperStep = PG5; //15
-  pinFuelPump = PG7;    //16
-  pinFan = PG6;         //17
-  //pinLaunch = PF5;      
+  pinBoost = 6;       //13
+  pinStepperDir = 36;  //14
+  pinStepperStep = 35; //15
+  pinFuelPump = 8;    //16
+  pinFan = 7;         //17
+  pinLaunch = 37;      
 }
 
 void resetPins()
@@ -203,251 +167,22 @@ void resetPins()
 
 void runLoop()
 {
-  if ((Serial.available()) > 0)
-  {
-    digitalToggle(LED_COMS);
-  }
-  else
-  {
-    digitalWrite(LED_COMS, LOW);
-  }
-
-#ifdef USE_CAN_DASH
-  dash_generic(&Can1);
-#endif
-  if (BIT_CHECK(LOOP_TIMER, BIT_TIMER_1HZ)) // 1 hertz
-  {
-#ifdef USE_I2C_BARO
-    float pressure;
-    float temperature;
-    LPS_Sensor.GetPressure(&pressure);
-    LPS_Sensor.GetTemperature(&temperature);
-    currentStatus.fuelTemp = temperature;
-    currentStatus.baro = pressure / 10.0f;
-#endif
-  }
-  if (BIT_CHECK(LOOP_TIMER, BIT_TIMER_4HZ)) // 4 hertz
-  {
-    digitalWrite(LED_ALERT, currentStatus.engineProtectStatus);
-  }
-  if (BIT_CHECK(LOOP_TIMER, BIT_TIMER_10HZ)) // 10 hertz
-  {
-    digitalToggle(LED_RUNNING);
-  }
-  if (BIT_CHECK(LOOP_TIMER, BIT_TIMER_15HZ)) // 15 hertz
+  if (BIT_CHECK(LOOP_TIMER, BIT_TIMER_1HZ)) //1 hertz
   {
   }
-  if (BIT_CHECK(LOOP_TIMER, BIT_TIMER_30HZ)) // 30 hertz
+  if (BIT_CHECK(LOOP_TIMER, BIT_TIMER_4HZ)) //4 hertz
   {
   }
-}
-
-void dash_generic(STM32_CAN *can)
-{
-  if (BIT_CHECK(LOOP_TIMER, BIT_TIMER_30HZ))
+  if (BIT_CHECK(LOOP_TIMER, BIT_TIMER_10HZ)) //10 hertz
   {
-    // (SensorValue * sensorMultiplier - offset) * DIV
-    outMsg.id = 0x5F0;
-    outMsg.len = 8;
-    outMsg.buf[0] = lowByte(currentStatus.RPM);            // ECU_RPM
-    outMsg.buf[1] = highByte(currentStatus.RPM);           // ECU_RPM
-    outMsg.buf[2] = lowByte(currentStatus.TPS * 10 * 65);  // ECU_TPS
-    outMsg.buf[3] = highByte(currentStatus.TPS * 10 * 65); // ECU_TPS
-    outMsg.buf[4] = lowByte(0x00);                         // ECU_PPS
-    outMsg.buf[5] = highByte(0x00);                        // ECU_PPS
-    outMsg.buf[6] = lowByte(currentStatus.vss * 10 * 10);  // ECU_VEH_SPD
-    outMsg.buf[7] = highByte(currentStatus.vss * 10 * 10); // ECU_VEH_SPD
-    can->write(outMsg);
-
-    outMsg.id = 0x5F1;
-    outMsg.len = 8;
-    outMsg.buf[0] = lowByte(0x00);  // ECU_WS_FR
-    outMsg.buf[1] = highByte(0x00); // ECU_WS_FR
-    outMsg.buf[2] = lowByte(0x00);  // ECU_WS_FL
-    outMsg.buf[3] = highByte(0x00); // ECU_WS_FL
-    outMsg.buf[4] = lowByte(0x00);  // ECU_WS_RR
-    outMsg.buf[5] = highByte(0x00); // ECU_WS_RR
-    outMsg.buf[6] = lowByte(0x00);  // ECU_WS_RL
-    outMsg.buf[7] = highByte(0x00); // ECU_WS_RL
-    can->write(outMsg);
-
-    outMsg.id = 0x5F2;
-    outMsg.len = 8;
-    outMsg.buf[0] = lowByte((((uint16_t)currentStatus.IAT * 10) - (-450)) * 19);       // ECU_INT_AIR_T
-    outMsg.buf[1] = highByte((((uint16_t)currentStatus.IAT * 10) - (-450)) * 19);      // ECU_INT_AIR_T
-    outMsg.buf[2] = lowByte((((uint16_t)currentStatus.coolant * 10) - (-450)) * 19);   // ECU_ENG_T
-    outMsg.buf[3] = highByte((((uint16_t)currentStatus.coolant * 10) - (-450)) * 19);  // ECU_ENG_T
-    outMsg.buf[4] = lowByte((((uint16_t)currentStatus.fuelTemp * 10) - (-450)) * 19);  // ECU_FUEL_T
-    outMsg.buf[5] = highByte((((uint16_t)currentStatus.fuelTemp * 10) - (-450)) * 19); // ECU_FUEL_T
-    outMsg.buf[6] = lowByte(0x00);                                                     // ECU_OIL_T
-    outMsg.buf[7] = highByte(0x00);                                                    // ECU_OIL_T
-    can->write(outMsg);
-
-    outMsg.id = 0x5F3;
-    outMsg.len = 8;
-    outMsg.buf[0] = lowByte(((uint16_t)currentStatus.MAP * 10) * 10);                          // ECU_MAN_AIR_P in kPa to mBar need * 10
-    outMsg.buf[1] = highByte(((uint16_t)currentStatus.MAP * 10) * 10);                         // ECU_MAN_AIR_P in kPa to mBar need * 10
-    outMsg.buf[2] = lowByte(((uint16_t)currentStatus.baro * 10) * 10);                         // ECU_BARO in kPa to mBar need * 10
-    outMsg.buf[3] = highByte(((uint16_t)currentStatus.baro * 10) * 10);                        // ECU_BARO in kPa to mBar need * 10
-    outMsg.buf[4] = lowByte(((uint16_t)(currentStatus.oilPressure * 0.0689476f * 10) * 100));  // ECU_OIL_P PSI to BAR * 6.89476f
-    outMsg.buf[5] = highByte(((uint16_t)(currentStatus.oilPressure * 0.0689476f * 10) * 100)); // ECU_OIL_P PSI to BAR * 6.89476f
-    outMsg.buf[6] = lowByte(((uint16_t)(currentStatus.fuelPressure * 0.0689476f * 10) * 2));   // ECU_FUEL_P PSI to BAR * 0.0689476f
-    outMsg.buf[7] = highByte(((uint16_t)(currentStatus.fuelPressure * 0.0689476f * 10) * 2));  // ECU_FUEL_P PSI to BAR * 0.0689476f
-    can->write(outMsg);
-
-    outMsg.id = 0x5F4;
-    outMsg.len = 8;
-    outMsg.buf[0] = lowByte((currentStatus.MAP - currentStatus.baro) * 10 * 10);  // ECU_BOOST in mBar
-    outMsg.buf[1] = highByte((currentStatus.MAP - currentStatus.baro) * 10 * 10); // ECU_BOOST in mBar
-    outMsg.buf[2] = lowByte(currentStatus.battery10 * 32 * 10);                   // ECU_V_BATT
-    outMsg.buf[3] = highByte(currentStatus.battery10 * 32 * 10);                  // ECU_V_BATT
-    outMsg.buf[4] = lowByte(0x00);                                                // ECU_FUEL_USE
-    outMsg.buf[5] = highByte(0x00);                                               // ECU_FUEL_USE
-    outMsg.buf[6] = lowByte((int16_t)currentStatus.gear);                         // ECU_GEAR
-    outMsg.buf[7] = highByte((int16_t)currentStatus.gear);                        // ECU_GEAR
-    can->write(outMsg);
-
-    outMsg.id = 0x5F5;
-    outMsg.len = 8;
-    outMsg.buf[0] = lowByte(0x00);  // ECU_SHIFT_FLAG
-    outMsg.buf[1] = highByte(0x00); // ECU_SHIFT_FLAG
-    outMsg.buf[2] = lowByte(0x00);  // ECU_GEAR_TIME
-    outMsg.buf[3] = highByte(0x00); // ECU_GEAR_TIME
-    outMsg.buf[4] = lowByte(0x00);  // ECU_THRT_VOLT
-    outMsg.buf[5] = highByte(0x00); // ECU_THRT_VOLT
-    outMsg.buf[6] = lowByte(0x00);  // ECU_FUEL_LEV
-    outMsg.buf[7] = highByte(0x00); // ECU_FUEL_LEV
-    can->write(outMsg);
-
-    outMsg.id = 0x5F6;
-    outMsg.len = 8;
-    outMsg.buf[0] = lowByte((uint16_t)((currentStatus.O2 / 14.7f * 100) * 2));    // ECU_LAMBDA1
-    outMsg.buf[1] = highByte((uint16_t)((currentStatus.O2 / 14.7f * 100) * 2));   // ECU_LAMBDA1
-    outMsg.buf[2] = lowByte((uint16_t)((currentStatus.O2_2 / 14.7f * 100) * 2));  // ECU_LAMBDA2
-    outMsg.buf[3] = highByte((uint16_t)((currentStatus.O2_2 / 14.7f * 100) * 2)); // ECU_LAMBDA2
-    outMsg.buf[4] = lowByte(0x00);                                                // ECU_LAMBDA_T1
-    outMsg.buf[5] = highByte(0x00);                                               // ECU_LAMBDA_T1
-    outMsg.buf[6] = lowByte(0x00);                                                // ECU_LAMBDA_T2
-    outMsg.buf[7] = highByte(0x00);                                               // ECU_LAMBDA_T2
-    can->write(outMsg);
-
-    outMsg.id = 0x5F7;
-    outMsg.len = 8;
-    outMsg.buf[0] = lowByte(0x00);                                                     // ECU_LAMB1_ERR
-    outMsg.buf[1] = highByte(0x00);                                                    // ECU_LAMB1_ERR
-    outMsg.buf[2] = lowByte(0x00);                                                     // ECU_LAMB2_ERR
-    outMsg.buf[3] = highByte(0x00);                                                    // ECU_LAMB2_ERR
-    outMsg.buf[4] = lowByte((uint16_t)((currentStatus.afrTarget / 14.7f * 100) * 2));  // ECU_LAMB1_TARGET
-    outMsg.buf[5] = highByte((uint16_t)((currentStatus.afrTarget / 14.7f * 100) * 2)); // ECU_LAMB1_TARGET
-    outMsg.buf[6] = lowByte((uint16_t)((currentStatus.afrTarget / 14.7f * 100) * 2));  // ECU_LAMB2_TARGET
-    outMsg.buf[7] = highByte((uint16_t)((currentStatus.afrTarget / 14.7f * 100) * 2)); // ECU_LAMB2_TARGET
-    can->write(outMsg);
-
-    outMsg.id = 0x5F8;
-    outMsg.len = 8;
-    outMsg.buf[0] = lowByte(0x00);  // ECU_STEER_POS
-    outMsg.buf[1] = highByte(0x00); // ECU_STEER_POS
-    outMsg.buf[2] = lowByte(0x00);  // ECU_STEER_SPD
-    outMsg.buf[3] = highByte(0x00); // ECU_STEER_SPD
-    outMsg.buf[4] = lowByte(0x00);  // ECU_BRK_P
-    outMsg.buf[5] = highByte(0x00); // ECU_BRK_P
-    outMsg.buf[6] = lowByte(0x00);  // ECU_CLUCH_P
-    outMsg.buf[7] = highByte(0x00); // ECU_CLUCH_P
-    can->write(outMsg);
-
-    outMsg.id = 0x5F9;
-    outMsg.len = 8;
-    outMsg.buf[0] = lowByte(0x00);  // ECU_BRK_P_FR
-    outMsg.buf[1] = highByte(0x00); // ECU_BRK_P_FR
-    outMsg.buf[2] = lowByte(0x00);  // ECU_BRK_P_FL
-    outMsg.buf[3] = highByte(0x00); // ECU_BRK_P_FL
-    outMsg.buf[4] = lowByte(0x00);  // ECU_BRK_P_RR
-    outMsg.buf[5] = highByte(0x00); // ECU_BRK_P_RR
-    outMsg.buf[6] = lowByte(0x00);  // ECU_BRK_P_RL
-    outMsg.buf[7] = highByte(0x00); // ECU_BRK_P_RL
-    can->write(outMsg);
-
-    outMsg.id = 0x5FA;
-    outMsg.len = 8;
-    outMsg.buf[0] = lowByte(0x00);  // ECU_ACC_LAT
-    outMsg.buf[1] = highByte(0x00); // ECU_ACC_LAT
-    outMsg.buf[2] = lowByte(0x00);  // ECU_ACC_LONG
-    outMsg.buf[3] = highByte(0x00); // ECU_ACC_LONG
-    outMsg.buf[4] = lowByte(0x00);  // ECU_GYRO
-    outMsg.buf[5] = highByte(0x00); // ECU_GYRO
-    outMsg.buf[6] = lowByte(0x00);  // ECU_GEAR_BOX_T
-    outMsg.buf[7] = highByte(0x00); // ECU_GEAR_BOX_T
-    can->write(outMsg);
-
-    outMsg.id = 0x5FB;
-    outMsg.len = 8;
-    outMsg.buf[0] = lowByte(0x00);                                            // ECU_ENG_TORQ
-    outMsg.buf[1] = highByte(0x00);                                           // ECU_ENG_TORQ
-    outMsg.buf[2] = lowByte(0x00);                                            // ECU_SLIP_ANG
-    outMsg.buf[3] = highByte(0x00);                                           // ECU_SLIP_ANG
-    outMsg.buf[4] = lowByte((uint16_t)((currentStatus.injAngle * 100) * 3));  // ECU_IGN_ANG1
-    outMsg.buf[5] = highByte((uint16_t)((currentStatus.injAngle * 100) * 3)); // ECU_IGN_ANG1
-    outMsg.buf[6] = lowByte((uint16_t)((currentStatus.injAngle * 100) * 3));  // ECU_IGN_ANG2
-    outMsg.buf[7] = highByte((uint16_t)((currentStatus.injAngle * 100) * 3)); // ECU_IGN_ANG2
-    can->write(outMsg);
-
-    outMsg.id = 0x5FC;
-    outMsg.len = 8;
-    outMsg.buf[0] = lowByte((uint16_t)(currentStatus.PW1 / 1000.0f * 10));  // ECU_INJ_TIME1
-    outMsg.buf[1] = highByte((uint16_t)(currentStatus.PW1 / 1000.0f * 10)); // ECU_INJ_TIME1
-    outMsg.buf[2] = lowByte((uint16_t)(currentStatus.PW2 / 1000.0f * 10));  // ECU_INJ_TIME2
-    outMsg.buf[3] = highByte((uint16_t)(currentStatus.PW2 / 1000.0f * 10)); // ECU_INJ_TIME2
-    outMsg.buf[4] = lowByte(0x00);                                          // ECU_INJ_P1
-    outMsg.buf[5] = highByte(0x00);                                         // ECU_INJ_P1
-    outMsg.buf[6] = lowByte(0x00);                                          // ECU_INJ_P2
-    outMsg.buf[7] = highByte(0x00);                                         // ECU_INJ_P2
-    can->write(outMsg);
-
-    outMsg.id = 0x5FD;
-    outMsg.len = 8;
-    outMsg.buf[0] = lowByte((int16_t)((currentStatus.advance * 100) * 3));   // ECU_SPARK_ANG_1
-    outMsg.buf[1] = highByte((int16_t)((currentStatus.advance * 100) * 3));  // ECU_SPARK_ANG_1
-    outMsg.buf[2] = lowByte((int16_t)((currentStatus.advance * 100) * 3));   // ECU_SPARK_ANG_2
-    outMsg.buf[3] = highByte((int16_t)((currentStatus.advance * 100) * 3));  // ECU_SPARK_ANG_2
-    outMsg.buf[4] = lowByte((int16_t)((currentStatus.advance1 * 100) * 3));  // ECU_SPARK_ADV_1
-    outMsg.buf[5] = highByte((int16_t)((currentStatus.advance1 * 100) * 3)); // ECU_SPARK_ADV_1
-    outMsg.buf[6] = lowByte((int16_t)((currentStatus.advance2 * 100) * 3));  // ECU_SPARK_ADV_2
-    outMsg.buf[7] = highByte((int16_t)((currentStatus.advance2 * 100) * 3)); // ECU_SPARK_ADV_2
-    can->write(outMsg);
-
-    outMsg.id = 0x5FE;
-    outMsg.len = 8;
-    outMsg.buf[0] = lowByte(0x00);  // ECC_USER01
-    outMsg.buf[1] = highByte(0x00); // ECC_USER01
-    outMsg.buf[2] = lowByte(0x00);  // ECC_USER02
-    outMsg.buf[3] = highByte(0x00); // ECC_USER02
-    outMsg.buf[4] = lowByte(0x00);  // ECC_USER03
-    outMsg.buf[5] = highByte(0x00); // ECC_USER03
-    outMsg.buf[6] = lowByte(0x00);  // ECC_USER04
-    outMsg.buf[7] = highByte(0x00); // ECC_USER04
-    can->write(outMsg);
-
-    outMsg.id = 0x5FF;
-    outMsg.len = 8;
-    outMsg.buf[0] = lowByte(0x00);  // ECC_USER05
-    outMsg.buf[1] = highByte(0x00); // ECC_USER05
-    outMsg.buf[2] = lowByte(0x00);  // ECC_USER06
-    outMsg.buf[3] = highByte(0x00); // ECC_USER06
-    outMsg.buf[4] = lowByte(0x00);  // ECC_USER07
-    outMsg.buf[5] = highByte(0x00); // ECC_USER07
-    outMsg.buf[6] = lowByte(0x00);  // ECC_USER08
-    outMsg.buf[7] = highByte(0x00); // ECC_USER08
-    can->write(outMsg);
+    digitalToggle(LED_BUILTIN);
   }
-}
-
-void doClearFlash(void)
-{
-  digitalWrite(LED_WARNING, HIGH);
-  EEPROM.read(0);
-  EEPROM.clear();
-  digitalWrite(LED_WARNING, LOW);
-  doSystemReset();
+  if (BIT_CHECK(LOOP_TIMER, BIT_TIMER_15HZ)) //15 hertz
+  {
+  }
+  if (BIT_CHECK(LOOP_TIMER, BIT_TIMER_30HZ)) //30 hertz
+  {
+  }
 }
 
 #endif
