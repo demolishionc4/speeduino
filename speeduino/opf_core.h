@@ -6,6 +6,7 @@
 #define USE_I2C_BARO
 #define USE_CAN_DASH
 
+#define NUM_DIGITAL_PINS 103
 
 #define CORE8_VERSION 24
 
@@ -46,6 +47,26 @@ void setupBoard();
 void resetPins();
 void setPins();
 void runLoop();
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
