@@ -2034,19 +2034,18 @@ void setPinMapping(byte boardID)
 
     #if defined(CORE_TEENSY35)
     case 50:
-      //Pin mappings as per the teensy rev A shield
+      break;
+
+    case 51:
+      //Pin mappings as per the teensy revB board shield
       pinInjector1 = 2; //Output pin injector 1 is on
       pinInjector2 = 10; //Output pin injector 2 is on
-      pinInjector3 = 6; //Output pin injector 3 is on
-      pinInjector4 = 9; //Output pin injector 4 is on
-      //Placeholder only - NOT USED:
-      //pinInjector5 = 13;
+      pinInjector3 = 6; //Output pin injector 3 is on - NOT USED
+      pinInjector4 = 9; //Output pin injector 4 is on - NOT USED
       pinCoil1 = 29; //Pin for coil 1
       pinCoil2 = 30; //Pin for coil 2
       pinCoil3 = 31; //Pin for coil 3 - ONLY WITH DB2
       pinCoil4 = 32; //Pin for coil 4 - ONLY WITH DB2
-      //Placeholder only - NOT USED:
-      //pinCoil5 = 46; 
       pinTrigger = 23; //The CAS pin
       pinTrigger2 = 36; //The Cam Sensor pin
       pinTPS = 16; //TPS input pin
@@ -2068,10 +2067,6 @@ void setPinMapping(byte boardID)
       pinSpareHOut1 = 8; // high current output spare1
       pinSpareHOut2 = 7; // high current output spare2
       pinSpareLOut1 = 21; //low current output spare1
-      break;
-
-    case 51:
-      
       break;
     #endif
 

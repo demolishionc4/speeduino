@@ -5,7 +5,7 @@
 
 void setupBoard()
 {
-  configPage2.pinMapping = 51;
+  configPage2.pinMapping = 50;
 
   //STATUS LED
   pinMode(LED_BUILTIN, OUTPUT);
