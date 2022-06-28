@@ -16,7 +16,6 @@ void setupBoard()
 {
   configPage2.pinMapping = 60;
   
-  resetPins();
   setPins();
 
   // STATUS LED
@@ -117,11 +116,9 @@ void setPins()
   //pinStepperStep = PG5; //15
   //pinFuelPump = PG7;    //16
   //pinFan = PG6;         //17
-  //pinLaunch = PF5;           
-}
+  //pinLaunch = PF5;       
 
-void resetPins()
-{
+
   pinInjector1 = BOARD_MAX_IO_PINS - 1;
   pinInjector2 = BOARD_MAX_IO_PINS - 1;
   pinInjector3 = BOARD_MAX_IO_PINS - 1;
@@ -197,6 +194,7 @@ void resetPins()
   pinWMIEnabled = BOARD_MAX_IO_PINS - 1;
   pinMC33810_1_CS = BOARD_MAX_IO_PINS - 1;
   pinMC33810_2_CS = BOARD_MAX_IO_PINS - 1;
+
 }
 
 void runLoop()

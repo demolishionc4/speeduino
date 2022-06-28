@@ -3,9 +3,8 @@
 
 #include <src/STM32_CAN/STM32_CAN.h>
 
-#define USE_I2C_BARO
-#define USE_CAN_DASH
-
+#define USE_I2C_BARO true
+#define USE_CAN_DASH true
 #define NUM_DIGITAL_PINS 103
 
 #define CORE8_VERSION 24
@@ -44,9 +43,13 @@
 
 
 void setupBoard();
-void resetPins();
 void setPins();
 void runLoop();
+
+
+
+
+
 
 
 
