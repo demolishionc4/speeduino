@@ -65,7 +65,7 @@
 
 #define SERIAL_RC_TIMEOUT   0x80 //Timeout error
 #define SERIAL_RC_CRC_ERR   0x82
-#define SERIAL_RC_UKWN_ERR  0x83 //Unkwnown command
+#define SERIAL_RC_UKWN_ERR  0x83 //Unknown command
 #define SERIAL_RC_RANGE_ERR 0x84 //Incorrect range. TS will not retry command
 #define SERIAL_RC_BUSY_ERR  0x85 //TS will wait and retry
 
@@ -73,7 +73,7 @@ extern bool serialWriteInProgress;
 extern bool serialReceivePending; /**< Whether or not a serial request has only been partially received. This occurs when a the length has been received in the serial buffer, but not all of the payload or CRC has yet been received. */
 
 
-void parseSerial();//This is the heart of the Command Line Interpeter.  All that needed to be done was to make it human readable.
+void parseSerial();//This is the heart of the Command Line Interpreter.  All that needed to be done was to make it human readable.
 void processSerialCommand();
 void sendSerialReturnCode(byte returnCode);
 void sendSerialPayload(void*, uint16_t payloadLength);
