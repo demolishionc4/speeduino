@@ -56,67 +56,149 @@ void setPins()
 //******************************************
   //******** Trigger CONNECTIONS ***************
   //******************************************
-
-  pinTrigger = PE2; //106
-  pinTrigger2 = PE3;  //107
-  pinTrigger3 = PE4;  //104
-  pinVSS = PE5;       //105
+  #ifdef PIN_TRIGGER_1
+  pinTrigger = PIN_TRIGGER_1;
+  #endif
+  #ifdef PIN_TRIGGER_2
+  pinTrigger2 = PIN_TRIGGER_2;
+  #endif
+  #ifdef PIN_TRIGGER_3
+  pinTrigger3 = PIN_TRIGGER_3;
+  #endif
+  #ifdef PIN_TRIGGER_VSS
+  pinVSS = PIN_TRIGGER_VSS;
+  #endif
 
   //******************************************
   //******** ANALOG CONNECTIONS ***************
   //******************************************
 
-  pinBat = PA0;  //A12
-  pinCLT = PA4;  //A7
-  pinIAT = PA3;  //A8
-  pinTPS = PA1;  //A9
-  pinO2 = PC1;   //A13
-  pinO2_2 = PC2; //A14
-  //pinBaro = PC5; //A1
-  pinMAP = PA5;   //A5
-  pinOilPressure = PA7;  //A0
-  //pinSpareTemp1 = PC4; //OIL TEMP
-  pinFuelPressure = PC4; //A2
+  #ifdef PIN_BAT
+  pinBat = PIN_BAT;
+  #endif
+  #ifdef PIN_CLT
+  pinCLT = PIN_CLT;
+  #endif
+  #ifdef PIN_IAT
+  pinIAT = PIN_IAT;
+  #endif
+  #ifdef PIN_TPS
+  pinTPS = PIN_TPS;
+  #endif
+  #ifdef PIN_O2
+  pinO2 = PIN_O2;
+  #endif
+  #ifdef PIN_O2_2
+  pinO2_2 = PIN_O2_2;
+  #endif
+  #ifdef PIN_BARO
+  pinBaro = PIN_BARO;
+  #endif
+  #ifdef PIN_MAP
+  pinMAP = PIN_MAP;
+  #endif
+  #ifdef PIN_OILPRESSURE
+  pinOilPressure = PIN_OILPRESSURE;
+  #endif
+  #ifdef PIN_SPARETEMP1
+  pinSpareTemp1 = PIN_SPARETEMP1;
+  #endif
+  #ifdef PIN_SPARETEMP2
+  pinSpareTemp2 = PIN_SPARETEMP2;
+  #endif
+  #ifdef PIN_FUELPRESSURE
+  pinFuelPressure = PIN_FUELPRESSURE;
+  #endif
 
   //******************************************
   //******** INJECTOR CONNECTIONS ***************
   //******************************************
 
-  pinInjector1 = PF13; //70
-  pinInjector2 = PF14; //71
-  pinInjector3 = PD8;  //4
-  pinInjector4 = PD9;  //5
-  pinInjector5 = PD10; //6
-  pinInjector6 = PD11; //7
-  pinInjector7 = PD12; //8
-  pinInjector8 = PD13; //9
+  #ifdef PIN_INJECTOR_1
+  pinInjector1 = PIN_INJECTOR_1;
+  #endif
+  #ifdef PIN_INJECTOR_2
+  pinInjector2 = PIN_INJECTOR_2;
+  #endif
+  #ifdef PIN_INJECTOR_3
+  pinInjector3 = PIN_INJECTOR_3;
+  #endif
+  #ifdef PIN_INJECTOR_4
+  pinInjector4 = PIN_INJECTOR_4;
+  #endif
+  #ifdef PIN_INJECTOR_5
+  pinInjector5 = PIN_INJECTOR_5;
+  #endif
+  #ifdef PIN_INJECTOR_6
+  pinInjector6 = PIN_INJECTOR_6;
+  #endif
+  #ifdef PIN_INJECTOR_7
+  pinInjector7 = PIN_INJECTOR_7;
+  #endif
+  #ifdef PIN_INJECTOR_8
+  pinInjector8 = PIN_INJECTOR_8;
+  #endif
 
   //******************************************
   //******** COIL CONNECTIONS ***************
   //******************************************
 
-  pinCoil1 = PE15; //59
-  pinCoil2 = PE14; //58
-  pinCoil3 = PE13; //61
-  pinCoil4 = PE12; //60
-  pinCoil5 = PE11; //63
-  pinCoil6 = PF15; //68
-  pinCoil7 = PG0;  //69
-  pinCoil8 = PG1;  //66
+  #ifdef PIN_COIL_1
+  pinCoil1 = PIN_COIL_1;
+  #endif
+  #ifdef PIN_COIL_2
+  pinCoil2 = PIN_COIL_2;
+  #endif
+  #ifdef PIN_COIL_3
+  pinCoil3 = PIN_COIL_3;
+  #endif
+  #ifdef PIN_COIL_4
+  pinCoil4 = PIN_COIL_4;
+  #endif
+  #ifdef PIN_COIL_5
+  pinCoil5 = PIN_COIL_5;
+  #endif
+  #ifdef PIN_COIL_6
+  pinCoil6 = PIN_COIL_6;
+  #endif
+  #ifdef PIN_COIL_7
+  pinCoil7 = PIN_COIL_7;
+  #endif
+  #ifdef PIN_COIL_8
+  pinCoil8 = PIN_COIL_8;
+  #endif
 
   //******************************************
   //******** OTHER CONNECTIONS ***************
   //******************************************
 
-  //pinTachOut = PD14;    //10
-  //pinIdle1 = PD11;      //11
-  //pinIdle2 = PG2;       //12
-  //pinBoost = PD12;       //13
-  //pinStepperDir = PG4;  //14
-  //pinStepperStep = PG5; //15
-  //pinFuelPump = PG7;    //16
-  //pinFan = PG6;         //17
-  //pinLaunch = PF5;       
+  #ifdef PIN_TACH
+  pinTachOut = PIN_TACH;
+  #endif
+  #ifdef PIN_IDLE_1
+  pinIdle1 = PIN_IDLE_1;
+  #endif
+  #ifdef PIN_IDLE_2
+  pinIdle2 = PIN_IDLE_2;
+  #endif
+  #ifdef PIN_BOOST
+  pinBoost = PIN_BOOST;
+  #endif
+  #ifdef PIN_STEPPERDIR
+  pinStepperDir = PIN_STEPPERDIR;
+  #endif
+  #ifdef PIN_STEPPERSTEP
+  pinStepperStep = PIN_STEPPERSTEP;
+  #endif
+  #ifdef PIN_FUELPUMP
+  pinFuelPump = PIN_FUELPUMP;
+  #endif
+  #ifdef PIN_FAN
+  pinFan = PIN_FAN;
+  #endif
+  #ifdef PIN_LAUNCH
+  pinLaunch = PIN_LAUNCH;  
+  #endif
 }
 void resetPins(){
   pinInjector1 = BOARD_MAX_IO_PINS - 1;
@@ -209,7 +291,11 @@ void runLoop()
   }
 
 #ifdef USE_CAN_DASH
-  dash_generic(&Can0);
+  #if (DASH_CAN == 1)
+    dash_generic(&Can1);
+  #else
+    dash_generic(&Can0);
+  #endif 
 #endif
   if (BIT_CHECK(LOOP_TIMER, BIT_TIMER_1HZ)) // 1 hertz
   {
