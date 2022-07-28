@@ -5,17 +5,17 @@
 
 #ifdef USE_I2C_BARO
 TwoWire LPS_dev(PIN_WIRE_SDA, PIN_WIRE_SCL);
-#if (CORE8_VERSION == 23)
+#if (USE_CORE8_VERSION == 23)
 LPS25HBSensor LPS_Sensor(&LPS_dev, LPS25HB_ADDRESS_LOW);
 #else
 LPS22HHSensor LPS_Sensor(&LPS_dev, LPS22HH_I2C_ADD_L);
-#endif // CORE8_VERSION
+#endif // USE_CORE8_VERSION
 #endif // USE_I2C_BARO
 
 void setupBoard()
 {
   configPage2.pinMapping = 60;
-  
+  resetPins();
   setPins();
 
   // STATUS LED
@@ -34,9 +34,9 @@ void setupBoard()
 #ifdef USE_I2C_BARO
   LPS_dev.begin();
   LPS_Sensor.begin();
-#if (CORE8_VERSION == 23)
+#if (USE_CORE8_VERSION == 23)
   LPS_Sensor.SetODR(7.0f);
-#endif // CORE8_VERSION
+#endif // USE_CORE8_VERSION
 
   LPS_Sensor.Enable();
 #endif // USE_I2C_BARO
@@ -82,14 +82,14 @@ void setPins()
   //******** INJECTOR CONNECTIONS ***************
   //******************************************
 
-  pinInjector8 = PD13; //9
-  pinInjector7 = PD12; //8
-  pinInjector6 = PD11; //7
-  pinInjector5 = PD10; //6
-  pinInjector4 = PD9;  //5
-  pinInjector3 = PD8;  //4
-  pinInjector2 = PF14; //71
   pinInjector1 = PF13; //70
+  pinInjector2 = PF14; //71
+  pinInjector3 = PD8;  //4
+  pinInjector4 = PD9;  //5
+  pinInjector5 = PD10; //6
+  pinInjector6 = PD11; //7
+  pinInjector7 = PD12; //8
+  pinInjector8 = PD13; //9
 
   //******************************************
   //******** COIL CONNECTIONS ***************
@@ -117,8 +117,8 @@ void setPins()
   //pinFuelPump = PG7;    //16
   //pinFan = PG6;         //17
   //pinLaunch = PF5;       
-
-
+}
+void resetPins(){
   pinInjector1 = BOARD_MAX_IO_PINS - 1;
   pinInjector2 = BOARD_MAX_IO_PINS - 1;
   pinInjector3 = BOARD_MAX_IO_PINS - 1;
