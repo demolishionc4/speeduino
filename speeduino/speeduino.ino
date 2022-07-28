@@ -46,6 +46,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include RTC_LIB_H //Defined in each boards .h file
 #include BOARD_H //Note that this is not a real file, it is defined in globals.h. 
 
+#include "opf_core.h"
+
 int ignition1StartAngle = 0;
 int ignition2StartAngle = 0;
 int ignition3StartAngle = 0;

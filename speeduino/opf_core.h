@@ -10,13 +10,14 @@
 #define CORE8_VERSION 24
 
 #if (CORE8_VERSION == 23)
-    #define USE_SPI_EEPROM PB12
+    #define USE_SPI_EEPROM PB12 
 #else
     #define USE_SPI_EEPROM PD6
 #endif //CORE8_VERSION
 
 #ifdef USE_SPI_EEPROM
-    #define PIN_SPI_SS USE_SPI_EEPROM   // W25Q16 (on board flash)
+    
+    #define PIN_SPI_SS USE_SPI_EEPROM
     #define PIN_SPI_MOSI PB15 // W25Q16 (on board flash)
     #define PIN_SPI_MISO PB14 // W25Q16 (on board flash)
     #define PIN_SPI_SCK PB13  // W25Q16 (on board flash)
@@ -30,10 +31,10 @@
     #endif //CORE8_VERSION
 #endif //USE_I2C_BARO
 
-#define LED_RUNNING PG9
-#define LED_WARNING PG10
-#define LED_ALERT PG11
-#define LED_COMS PG12
+#define LED_RUNNING PG10
+#define LED_WARNING PG11
+#define LED_ALERT PG12
+#define LED_COMS PG13
 
 #define PIN_SERIAL_RX PA10
 #define PIN_SERIAL_TX PA9

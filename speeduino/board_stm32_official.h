@@ -5,7 +5,6 @@
 #include <HardwareTimer.h>
 #include <HardwareSerial.h>
 #include "STM32RTC.h"
-#include "opf_core.h"
 #include <SPI.h>
 
 #if defined(STM32F1)
@@ -79,7 +78,7 @@ extern "C" char* sbrk(int incr);
   #endif
 #else
   #ifdef USE_SPI_EEPROM
-    #define pinIsReserved(pin)  ( ((pin) == PA11) || ((pin) == PA12) || ((pin) == PB3) || ((pin) == PB4) || ((pin) == PB5) || ((pin) == USE_SPI_EEPROM) ) //Forbidden pins like USB
+    #define pinIsReserved(pin)  ( ((pin) == PA11) || ((pin) == PA12) || ((pin) == PIN_SPI_MOSI) || ((pin) == PIN_SPI_MISO) || ((pin) == PIN_SPI_SCK) || ((pin) == PIN_SPI_SS) ) //Forbidden pins like USB
   #else
     #define pinIsReserved(pin)  ( ((pin) == PA11) || ((pin) == PA12) || ((pin) == PB3) || ((pin) == PB4) || ((pin) == PB5) || ((pin) == PB0) ) //Forbidden pins like USB
   #endif
