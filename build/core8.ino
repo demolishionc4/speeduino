@@ -1,7 +1,7 @@
 #ifndef OPF_CORE
 #define OPF_CORE
 
-#include "opf_core.h"
+#include "core8.h"
 
 #ifdef USE_I2C_BARO
 TwoWire LPS_dev(PIN_WIRE_SDA, PIN_WIRE_SCL);

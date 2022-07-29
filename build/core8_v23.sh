@@ -35,17 +35,21 @@ printf "Build for Core8 v2.3\n"
 
 NOW=$(date +"%Y-%m-%d")
 
-pio pkg update -c build/core8_23.ini
-pio run -c build/core8_23.ini
+cd build
+
+pio run -c core8_23.ini -t clean
+pio run -c core8_23.ini
+
+cd ..
 
 FILE="core8_23_$NOW"
 
-mkdir /Users/developer/Code/speeduino/build/"$FILE"
-cp /Users/developer/Code/speeduino/.pio/build/black_F407ZG/firmware.bin /Users/developer/Code/speeduino/build/"$FILE"/
-cp /Users/developer/Code/speeduino/reference/speeduino.ini /Users/developer/Code/speeduino/build/"$FILE"/
+mkdir /Users/developer/Code/speeduino-opf/build/"$FILE"
+cp /Users/developer/Code/speeduino-opf/build/.pio/build/CORE8/firmware.bin /Users/developer/Code/speeduino-opf/build/"$FILE"/
+cp /Users/developer/Code/speeduino-opf/reference/speeduino.ini /Users/developer/Code/speeduino-opf/build/"$FILE"/
 
-zip -vr /Users/developer/Code/speeduino/build/"$FILE".zip /Users/developer/Code/speeduino/build/"$FILE" -x "*.DS_Store"
-cp /Users/developer/Code/speeduino/build/"$FILE".zip /Users/developer/Library/CloudStorage/GoogleDrive-b.brazdziunas@gmail.com/My\ Drive/Speeduino/core8/
+zip -vr /Users/developer/Code/speeduino-opf/build/"$FILE"/"$FILE".zip /Users/developer/Code/speeduino-opf/build/"$FILE" -x "*.DS_Store"
+cp /Users/developer/Code/speeduino-opf/build/"$FILE"/"$FILE".zip /Users/developer/Library/CloudStorage/GoogleDrive-b.brazdziunas@gmail.com/My\ Drive/Speeduino/core8/
 
 rm -R "$FILE"
 rm "$FILE".zip
