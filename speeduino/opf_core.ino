@@ -324,8 +324,10 @@ void runLoop()
   }
 }
 
+
 void dash_generic(STM32_CAN *can)
 {
+  #ifdef USE_DASH_AIM
   if (BIT_CHECK(LOOP_TIMER, BIT_TIMER_30HZ))
   {
     // (SensorValue * sensorMultiplier - offset) * DIV
@@ -521,7 +523,124 @@ void dash_generic(STM32_CAN *can)
     outMsg.buf[7] = highByte(0x00); // ECC_USER08
     can->write(outMsg);
   }
+  #endif
+
+  #ifdef USE_DASH_LINK
+  if (BIT_CHECK(LOOP_TIMER, BIT_TIMER_30HZ))
+  {
+    outMsg.id = 0x370 + 2;
+    outMsg.len = 8;
+    outMsg.buf[0] = highByte(currentStatus.battery10);
+    outMsg.buf[1] = lowByte(currentStatus.battery10);
+    outMsg.buf[2] = highByte(0x00);
+    outMsg.buf[3] = lowByte(0x00);
+    outMsg.buf[4] = highByte(currentStatus.boostTarget);
+    outMsg.buf[5] = lowByte(currentStatus.boostTarget);
+    outMsg.buf[6] = highByte(currentStatus.baro);
+    outMsg.buf[7] = lowByte(currentStatus.baro);
+    can->write(outMsg);
+
+    outMsg.id = 0x3E0 + 0;
+    outMsg.len = 4;
+    outMsg.buf[0] = highByte(currentStatus.coolant);
+    outMsg.buf[1] = lowByte(currentStatus.coolant);
+    outMsg.buf[2] = highByte(currentStatus.IAT);
+    outMsg.buf[3] = lowByte(currentStatus.IAT);
+    can->write(outMsg);
+
+    outMsg.id = 0x368 + 1;
+    outMsg.len = 2;
+    outMsg.buf[0] = highByte(currentStatus.syncLossCounter);
+    outMsg.buf[1] = lowByte(currentStatus.syncLossCounter);
+    can->write(outMsg);
+
+    outMsg.id = 0x3E8;
+    outMsg.len = 8;
+    outMsg.buf[0] = 0;
+    outMsg.buf[1] = 0;
+    outMsg.buf[2] = lowByte(currentStatus.RPM);
+    outMsg.buf[3] = highByte(currentStatus.RPM);
+    outMsg.buf[4] = lowByte(currentStatus.MAP - currentStatus.baro);
+    outMsg.buf[5] = highByte(currentStatus.MAP - currentStatus.baro);
+    outMsg.buf[6] = 0;
+    outMsg.buf[7] = 0;
+    can->write(outMsg);
+
+    outMsg.id = 0x3E8;
+    outMsg.len = 8;
+    outMsg.buf[0] = 0 + 1;
+    outMsg.buf[1] = 0;
+    outMsg.buf[2] = lowByte(currentStatus.baro * 10);
+    outMsg.buf[3] = highByte(currentStatus.baro * 10);
+    outMsg.buf[4] = lowByte(currentStatus.TPS * 10);
+    outMsg.buf[5] = highByte(currentStatus.TPS * 10);
+    outMsg.buf[6] = 0;
+    outMsg.buf[7] = 0;
+    can->write(outMsg);
+
+    outMsg.id = 0x3E8;
+    outMsg.len = 8;
+    outMsg.buf[0] = 0 + 2;
+    outMsg.buf[1] = 0;
+    outMsg.buf[2] = 0;
+    outMsg.buf[3] = 0;
+    outMsg.buf[4] = lowByte(currentStatus.PW1);
+    outMsg.buf[5] = highByte(currentStatus.PW1);
+    outMsg.buf[6] = lowByte(currentStatus.coolant + 50);
+    outMsg.buf[7] = highByte(currentStatus.coolant + 50);
+    can->write(outMsg);
+
+    outMsg.id = 0x3E8;
+    outMsg.len = 8;
+    outMsg.buf[0] = 0 + 3;
+    outMsg.buf[1] = 0;
+    outMsg.buf[2] = lowByte(currentStatus.IAT + 50);
+    outMsg.buf[3] = highByte(currentStatus.IAT + 50);
+    outMsg.buf[4] = lowByte(currentStatus.battery10 * 10);
+    outMsg.buf[5] = highByte(currentStatus.battery10 * 10);
+    outMsg.buf[6] = 0;
+    outMsg.buf[7] = 0;
+    can->write(outMsg);
+
+    outMsg.id = 0x3E8;
+    outMsg.len = 8;
+    outMsg.buf[0] = 0 + 6;
+    outMsg.buf[1] = 0;
+    outMsg.buf[2] = 0;
+    outMsg.buf[3] = 0;
+    outMsg.buf[4] = lowByte((uint8_t)(currentStatus.O2 * 100 / configPage2.stoich));
+    outMsg.buf[5] = highByte((uint8_t)(currentStatus.O2 * 100 / configPage2.stoich));
+    outMsg.buf[6] = 0;
+    outMsg.buf[7] = 0;
+    can->write(outMsg);
+
+    outMsg.id = 0x3E8;
+    outMsg.len = 8;
+    outMsg.buf[0] = 0 + 7;
+    outMsg.buf[1] = 0;
+    outMsg.buf[2] = lowByte(currentStatus.syncLossCounter);
+    outMsg.buf[3] = highByte(currentStatus.syncLossCounter);
+    outMsg.buf[4] = 0;
+    outMsg.buf[5] = 0;
+    outMsg.buf[6] = lowByte(currentStatus.fuelPressure * 10);
+    outMsg.buf[7] = highByte(currentStatus.fuelPressure * 10);
+    can->write(outMsg);
+
+    outMsg.id = 0x3E8;
+    outMsg.len = 8;
+    outMsg.buf[0] = 0 + 8;
+    outMsg.buf[1] = 0;
+    outMsg.buf[2] = 0;
+    outMsg.buf[3] = 0;
+    outMsg.buf[4] = lowByte(currentStatus.oilPressure * 10);
+    outMsg.buf[5] = highByte(currentStatus.oilPressure * 10);
+    outMsg.buf[6] = 0;
+    outMsg.buf[7] = 0;
+    can->write(outMsg);
+  }
+  #endif
 }
+
 
 void doClearFlash(void)
 {
