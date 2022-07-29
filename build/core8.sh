@@ -31,10 +31,9 @@ if ! grep -q 'runLoop();' speeduino/speeduino.ino; then
   gsed -i 's/LOOP_TIMER = TIMER_mask;/LOOP_TIMER = TIMER_mask;\nrunLoop();/gI' speeduino/speeduino.ino
 fi
 
-printf "Build for Core8 v2.3\n"
-
 NOW=$(date +"%Y-%m-%d")
 
+printf "Build for Core8 v2.3\n"
 cd build
 
 pio run -c core8_23.ini -t clean
@@ -51,12 +50,65 @@ cp /Users/developer/Code/speeduino-opf/reference/speeduino.ini /Users/developer/
 zip -vr /Users/developer/Code/speeduino-opf/build/"$FILE"/"$FILE".zip /Users/developer/Code/speeduino-opf/build/"$FILE" -x "*.DS_Store"
 cp /Users/developer/Code/speeduino-opf/build/"$FILE"/"$FILE".zip /Users/developer/Library/CloudStorage/GoogleDrive-b.brazdziunas@gmail.com/My\ Drive/Speeduino/core8/
 
-rm -R "$FILE"
-rm "$FILE".zip
+rm -R /Users/developer/Code/speeduino-opf/build/"$FILE"
 
-# pio run -c core8_24c.ini
-# pio run -c core8_24d.ini
-# pio run -c core8_24_mercedes_v8.ini
+
+printf "Build for Core8 v2.4c\n"
+cd build
+
+pio run -c core8_24c.ini -t clean
+pio run -c core8_24c.ini
+
+cd ..
+
+FILE="core8_24c_$NOW"
+
+mkdir /Users/developer/Code/speeduino-opf/build/"$FILE"
+cp /Users/developer/Code/speeduino-opf/build/.pio/build/CORE8/firmware.bin /Users/developer/Code/speeduino-opf/build/"$FILE"/
+cp /Users/developer/Code/speeduino-opf/reference/speeduino.ini /Users/developer/Code/speeduino-opf/build/"$FILE"/
+
+zip -vr /Users/developer/Code/speeduino-opf/build/"$FILE"/"$FILE".zip /Users/developer/Code/speeduino-opf/build/"$FILE" -x "*.DS_Store"
+cp /Users/developer/Code/speeduino-opf/build/"$FILE"/"$FILE".zip /Users/developer/Library/CloudStorage/GoogleDrive-b.brazdziunas@gmail.com/My\ Drive/Speeduino/core8/
+
+rm -R /Users/developer/Code/speeduino-opf/build/"$FILE"
+
+printf "Build for Core8 v2.4d\n"
+cd build
+
+pio run -c core8_24d.ini -t clean
+pio run -c core8_24d.ini
+
+cd ..
+
+FILE="core8_24d_$NOW"
+
+mkdir /Users/developer/Code/speeduino-opf/build/"$FILE"
+cp /Users/developer/Code/speeduino-opf/build/.pio/build/CORE8/firmware.bin /Users/developer/Code/speeduino-opf/build/"$FILE"/
+cp /Users/developer/Code/speeduino-opf/reference/speeduino.ini /Users/developer/Code/speeduino-opf/build/"$FILE"/
+
+zip -vr /Users/developer/Code/speeduino-opf/build/"$FILE"/"$FILE".zip /Users/developer/Code/speeduino-opf/build/"$FILE" -x "*.DS_Store"
+cp /Users/developer/Code/speeduino-opf/build/"$FILE"/"$FILE".zip /Users/developer/Library/CloudStorage/GoogleDrive-b.brazdziunas@gmail.com/My\ Drive/Speeduino/core8/
+
+rm -R /Users/developer/Code/speeduino-opf/build/"$FILE"
+
+printf "Build for Core8 v2.4 mercedes\n"
+cd build
+
+pio run -c core8_24_mercedes_v8.ini -t clean
+pio run -c core8_24_mercedes_v8.ini
+
+cd ..
+
+FILE="core8_24_mb_$NOW"
+
+mkdir /Users/developer/Code/speeduino-opf/build/"$FILE"
+cp /Users/developer/Code/speeduino-opf/build/.pio/build/CORE8/firmware.bin /Users/developer/Code/speeduino-opf/build/"$FILE"/
+cp /Users/developer/Code/speeduino-opf/reference/speeduino.ini /Users/developer/Code/speeduino-opf/build/"$FILE"/
+
+zip -vr /Users/developer/Code/speeduino-opf/build/"$FILE"/"$FILE".zip /Users/developer/Code/speeduino-opf/build/"$FILE" -x "*.DS_Store"
+cp /Users/developer/Code/speeduino-opf/build/"$FILE"/"$FILE".zip /Users/developer/Library/CloudStorage/GoogleDrive-b.brazdziunas@gmail.com/My\ Drive/Speeduino/core8/
+
+rm -R /Users/developer/Code/speeduino-opf/build/"$FILE"
 
 cp build/backup/board_stm32_official.h speeduino/board_stm32_official.h 
 cp build/backup/board_stm32_official.ino speeduino/board_stm32_official.ino 
