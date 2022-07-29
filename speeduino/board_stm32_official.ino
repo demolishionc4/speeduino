@@ -9,7 +9,6 @@
 #if HAL_CAN_MODULE_ENABLED
 //This activates CAN1 interface on STM32, but it's named as Can0, because that's how Teensy implementation is done
 STM32_CAN Can0 (CAN1, ALT_2, RX_SIZE_256, TX_SIZE_16);
-STM32_CAN Can1 (CAN2, ALT, RX_SIZE_256, TX_SIZE_16);
 /*
 These CAN interfaces and pins are available for use, depending on the chip/package:
 Default CAN1 pins are PA11 and PA12. Alternative (ALT) pins are PB8 & PB9 and ALT_2 pins are PD0 & PD1.
