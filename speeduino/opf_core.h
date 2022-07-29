@@ -9,14 +9,16 @@
 #undef PIN_SPI_MISO
 #undef PIN_SPI_SCK
 
-
-#if (USE_CORE8_VERSION == 23)
-    #define USE_SPI_EEPROM PB12 
-#else
-    #define USE_SPI_EEPROM PD6
-#endif //USE_CORE8_VERSION
-
 #ifdef USE_SPI_EEPROM
+
+    #undef USE_SPI_EEPROM
+    
+    #if (USE_CORE8_VERSION == 23)
+        #define USE_SPI_EEPROM PB12 
+    #else
+        #define USE_SPI_EEPROM PD6
+    #endif //USE_CORE8_VERSION
+
     #define PIN_SPI_SS USE_SPI_EEPROM
     #define PIN_SPI_MOSI PB15 // W25Q16 (on board flash)
     #define PIN_SPI_MISO PB14 // W25Q16 (on board flash)
