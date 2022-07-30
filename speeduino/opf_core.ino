@@ -19,14 +19,22 @@ void setupBoard()
   setPins();
 
   // STATUS LED
+#ifdef LED_RUNNING
   pinMode(LED_RUNNING, OUTPUT);
   digitalWrite(LED_RUNNING, LOW);
+#endif
+#ifdef LED_WARNING
   pinMode(LED_WARNING, OUTPUT);
   digitalWrite(LED_WARNING, LOW);
+#endif
+#ifdef LED_ALERT
   pinMode(LED_ALERT, OUTPUT);
   digitalWrite(LED_ALERT, LOW);
+#endif
+#ifdef LED_COMS
   pinMode(LED_COMS, OUTPUT);
   digitalWrite(LED_COMS, LOW);
+#endif
 #ifdef USE_SPI_EEPROM
   EEPROM.begin(SPI_for_flash, PIN_SPI_SS);
   EEPROM.read(0);
@@ -53,154 +61,155 @@ void setupBoard()
 }
 void setPins()
 {
-//******************************************
+  //******************************************
   //******** Trigger CONNECTIONS ***************
   //******************************************
-  #ifdef PIN_TRIGGER_1
+#ifdef PIN_TRIGGER_1
   pinTrigger = PIN_TRIGGER_1;
-  #endif
-  #ifdef PIN_TRIGGER_2
+#endif
+#ifdef PIN_TRIGGER_2
   pinTrigger2 = PIN_TRIGGER_2;
-  #endif
-  #ifdef PIN_TRIGGER_3
+#endif
+#ifdef PIN_TRIGGER_3
   pinTrigger3 = PIN_TRIGGER_3;
-  #endif
-  #ifdef PIN_TRIGGER_VSS
+#endif
+#ifdef PIN_TRIGGER_VSS
   pinVSS = PIN_TRIGGER_VSS;
-  #endif
+#endif
 
   //******************************************
   //******** ANALOG CONNECTIONS ***************
   //******************************************
 
-  #ifdef PIN_BAT
+#ifdef PIN_BAT
   pinBat = PIN_BAT;
-  #endif
-  #ifdef PIN_CLT
+#endif
+#ifdef PIN_CLT
   pinCLT = PIN_CLT;
-  #endif
-  #ifdef PIN_IAT
+#endif
+#ifdef PIN_IAT
   pinIAT = PIN_IAT;
-  #endif
-  #ifdef PIN_TPS
+#endif
+#ifdef PIN_TPS
   pinTPS = PIN_TPS;
-  #endif
-  #ifdef PIN_O2
+#endif
+#ifdef PIN_O2
   pinO2 = PIN_O2;
-  #endif
-  #ifdef PIN_O2_2
+#endif
+#ifdef PIN_O2_2
   pinO2_2 = PIN_O2_2;
-  #endif
-  #ifdef PIN_BARO
+#endif
+#ifdef PIN_BARO
   pinBaro = PIN_BARO;
-  #endif
-  #ifdef PIN_MAP
+#endif
+#ifdef PIN_MAP
   pinMAP = PIN_MAP;
-  #endif
-  #ifdef PIN_OILPRESSURE
+#endif
+#ifdef PIN_OILPRESSURE
   pinOilPressure = PIN_OILPRESSURE;
-  #endif
-  #ifdef PIN_SPARETEMP1
+#endif
+#ifdef PIN_SPARETEMP1
   pinSpareTemp1 = PIN_SPARETEMP1;
-  #endif
-  #ifdef PIN_SPARETEMP2
+#endif
+#ifdef PIN_SPARETEMP2
   pinSpareTemp2 = PIN_SPARETEMP2;
-  #endif
-  #ifdef PIN_FUELPRESSURE
+#endif
+#ifdef PIN_FUELPRESSURE
   pinFuelPressure = PIN_FUELPRESSURE;
-  #endif
+#endif
 
   //******************************************
   //******** INJECTOR CONNECTIONS ***************
   //******************************************
 
-  #ifdef PIN_INJECTOR_1
+#ifdef PIN_INJECTOR_1
   pinInjector1 = PIN_INJECTOR_1;
-  #endif
-  #ifdef PIN_INJECTOR_2
+#endif
+#ifdef PIN_INJECTOR_2
   pinInjector2 = PIN_INJECTOR_2;
-  #endif
-  #ifdef PIN_INJECTOR_3
+#endif
+#ifdef PIN_INJECTOR_3
   pinInjector3 = PIN_INJECTOR_3;
-  #endif
-  #ifdef PIN_INJECTOR_4
+#endif
+#ifdef PIN_INJECTOR_4
   pinInjector4 = PIN_INJECTOR_4;
-  #endif
-  #ifdef PIN_INJECTOR_5
+#endif
+#ifdef PIN_INJECTOR_5
   pinInjector5 = PIN_INJECTOR_5;
-  #endif
-  #ifdef PIN_INJECTOR_6
+#endif
+#ifdef PIN_INJECTOR_6
   pinInjector6 = PIN_INJECTOR_6;
-  #endif
-  #ifdef PIN_INJECTOR_7
+#endif
+#ifdef PIN_INJECTOR_7
   pinInjector7 = PIN_INJECTOR_7;
-  #endif
-  #ifdef PIN_INJECTOR_8
+#endif
+#ifdef PIN_INJECTOR_8
   pinInjector8 = PIN_INJECTOR_8;
-  #endif
+#endif
 
   //******************************************
   //******** COIL CONNECTIONS ***************
   //******************************************
 
-  #ifdef PIN_COIL_1
+#ifdef PIN_COIL_1
   pinCoil1 = PIN_COIL_1;
-  #endif
-  #ifdef PIN_COIL_2
+#endif
+#ifdef PIN_COIL_2
   pinCoil2 = PIN_COIL_2;
-  #endif
-  #ifdef PIN_COIL_3
+#endif
+#ifdef PIN_COIL_3
   pinCoil3 = PIN_COIL_3;
-  #endif
-  #ifdef PIN_COIL_4
+#endif
+#ifdef PIN_COIL_4
   pinCoil4 = PIN_COIL_4;
-  #endif
-  #ifdef PIN_COIL_5
+#endif
+#ifdef PIN_COIL_5
   pinCoil5 = PIN_COIL_5;
-  #endif
-  #ifdef PIN_COIL_6
+#endif
+#ifdef PIN_COIL_6
   pinCoil6 = PIN_COIL_6;
-  #endif
-  #ifdef PIN_COIL_7
+#endif
+#ifdef PIN_COIL_7
   pinCoil7 = PIN_COIL_7;
-  #endif
-  #ifdef PIN_COIL_8
+#endif
+#ifdef PIN_COIL_8
   pinCoil8 = PIN_COIL_8;
-  #endif
+#endif
 
   //******************************************
   //******** OTHER CONNECTIONS ***************
   //******************************************
 
-  #ifdef PIN_TACH
+#ifdef PIN_TACH
   pinTachOut = PIN_TACH;
-  #endif
-  #ifdef PIN_IDLE_1
+#endif
+#ifdef PIN_IDLE_1
   pinIdle1 = PIN_IDLE_1;
-  #endif
-  #ifdef PIN_IDLE_2
+#endif
+#ifdef PIN_IDLE_2
   pinIdle2 = PIN_IDLE_2;
-  #endif
-  #ifdef PIN_BOOST
+#endif
+#ifdef PIN_BOOST
   pinBoost = PIN_BOOST;
-  #endif
-  #ifdef PIN_STEPPERDIR
+#endif
+#ifdef PIN_STEPPERDIR
   pinStepperDir = PIN_STEPPERDIR;
-  #endif
-  #ifdef PIN_STEPPERSTEP
+#endif
+#ifdef PIN_STEPPERSTEP
   pinStepperStep = PIN_STEPPERSTEP;
-  #endif
-  #ifdef PIN_FUELPUMP
+#endif
+#ifdef PIN_FUELPUMP
   pinFuelPump = PIN_FUELPUMP;
-  #endif
-  #ifdef PIN_FAN
+#endif
+#ifdef PIN_FAN
   pinFan = PIN_FAN;
-  #endif
-  #ifdef PIN_LAUNCH
-  pinLaunch = PIN_LAUNCH;  
-  #endif
+#endif
+#ifdef PIN_LAUNCH
+  pinLaunch = PIN_LAUNCH;
+#endif
 }
-void resetPins(){
+void resetPins()
+{
   pinInjector1 = BOARD_MAX_IO_PINS - 1;
   pinInjector2 = BOARD_MAX_IO_PINS - 1;
   pinInjector3 = BOARD_MAX_IO_PINS - 1;
@@ -276,26 +285,29 @@ void resetPins(){
   pinWMIEnabled = BOARD_MAX_IO_PINS - 1;
   pinMC33810_1_CS = BOARD_MAX_IO_PINS - 1;
   pinMC33810_2_CS = BOARD_MAX_IO_PINS - 1;
-
 }
 
 void runLoop()
 {
   if ((Serial.available()) > 0)
   {
+#ifdef LED_COMS
     digitalToggle(LED_COMS);
+#endif
   }
   else
   {
+#ifdef LED_COMS
     digitalWrite(LED_COMS, LOW);
+#endif
   }
 
 #ifdef USE_CAN_DASH
-  #if (DASH_CAN == 1)
-    dash_generic(&Can1);
-  #else
-    dash_generic(&Can0);
-  #endif 
+#if (DASH_CAN == 1)
+  dash_generic(&Can1);
+#else
+  dash_generic(&Can0);
+#endif
 #endif
   if (BIT_CHECK(LOOP_TIMER, BIT_TIMER_1HZ)) // 1 hertz
   {
@@ -310,11 +322,15 @@ void runLoop()
   }
   if (BIT_CHECK(LOOP_TIMER, BIT_TIMER_4HZ)) // 4 hertz
   {
+#ifdef LED_ALERT
     digitalWrite(LED_ALERT, currentStatus.engineProtectStatus);
+#endif
   }
   if (BIT_CHECK(LOOP_TIMER, BIT_TIMER_10HZ)) // 10 hertz
   {
+#ifdef LED_RUNNING
     digitalToggle(LED_RUNNING);
+#endif
   }
   if (BIT_CHECK(LOOP_TIMER, BIT_TIMER_15HZ)) // 15 hertz
   {
@@ -324,10 +340,9 @@ void runLoop()
   }
 }
 
-
 void dash_generic(STM32_CAN *can)
 {
-  #ifdef USE_DASH_AIM
+#ifdef USE_DASH_AIM
   if (BIT_CHECK(LOOP_TIMER, BIT_TIMER_30HZ))
   {
     // (SensorValue * sensorMultiplier - offset) * DIV
@@ -523,9 +538,9 @@ void dash_generic(STM32_CAN *can)
     outMsg.buf[7] = highByte(0x00); // ECC_USER08
     can->write(outMsg);
   }
-  #endif
+#endif
 
-  #ifdef USE_DASH_LINK
+#ifdef USE_DASH_LINK
   if (BIT_CHECK(LOOP_TIMER, BIT_TIMER_30HZ))
   {
     outMsg.id = 0x370 + 2;
@@ -638,16 +653,21 @@ void dash_generic(STM32_CAN *can)
     outMsg.buf[7] = 0;
     can->write(outMsg);
   }
-  #endif
+#endif
 }
-
 
 void doClearFlash(void)
 {
+
+#ifdef LED_WARNING
   digitalWrite(LED_WARNING, HIGH);
+#endif
   EEPROM.read(0);
   EEPROM.clear();
+
+#ifdef LED_WARNING
   digitalWrite(LED_WARNING, LOW);
+#endif
   doSystemReset();
 }
 
