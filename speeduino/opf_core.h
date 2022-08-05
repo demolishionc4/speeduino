@@ -3,15 +3,14 @@
 
 #include <src/STM32_CAN/STM32_CAN.h>
 
-#undef USE_SPI_EEPROM    
-#undef PIN_SPI_SS
-#undef PIN_SPI_MOSI
-#undef PIN_SPI_MISO
-#undef PIN_SPI_SCK
 
 #ifdef USE_SPI_EEPROM
 
     #undef USE_SPI_EEPROM
+    #undef PIN_SPI_SS
+    #undef PIN_SPI_MOSI
+    #undef PIN_SPI_MISO
+    #undef PIN_SPI_SCK
     
     #if (USE_CORE8_VERSION == 23)
         #define USE_SPI_EEPROM PB12 
