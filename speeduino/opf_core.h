@@ -1,8 +1,12 @@
 #include <Arduino.h>
 #include "speeduino.h"
 
+#ifdef CORE_STM32
 #include <src/STM32_CAN/STM32_CAN.h>
-
+#endif  
+#ifdef CORE_TEENSY
+#include <FlexCAN_T4.h>
+#endif  
 
 #ifdef USE_SPI_EEPROM
 

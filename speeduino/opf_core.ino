@@ -304,9 +304,9 @@ void runLoop()
 
 #ifdef USE_CAN_DASH
 #if (DASH_CAN == 1)
-  dash_generic(&Can1);
+  opf_generic(&Can1);
 #else
-  dash_generic(&Can0);
+  opf_generic(&Can0);
 #endif
 #endif
   if (BIT_CHECK(LOOP_TIMER, BIT_TIMER_1HZ)) // 1 hertz
@@ -340,8 +340,8 @@ void runLoop()
   }
 }
 
-void dash_generic(STM32_CAN *can)
-{
+#ifdef CORE_STM32
+void opf_generic(STM32_CAN *can){
 #ifdef USE_DASH_AIM
   if (BIT_CHECK(LOOP_TIMER, BIT_TIMER_30HZ))
   {
@@ -655,10 +655,12 @@ void dash_generic(STM32_CAN *can)
   }
 #endif
 }
+#endif
 
 void doClearFlash(void)
 {
 
+#ifdef USE_SPI_EEPROM
 #ifdef LED_WARNING
   digitalWrite(LED_WARNING, HIGH);
 #endif
@@ -669,6 +671,7 @@ void doClearFlash(void)
   digitalWrite(LED_WARNING, LOW);
 #endif
   doSystemReset();
+#endif
 }
 
 #endif
