@@ -2259,7 +2259,7 @@ void setPinMapping(byte boardID)
         /* = PA5; */ //ADC12
         pinFuelPump = PA6; //ADC12 LED_BUILTIN_1
         /* = PA7; */ //ADC12 LED_BUILTIN_2
-        pinCoil3 = PA8;
+        /* = PA8;
         /* = PA9 */ //TXD1
         /* = PA10 */ //RXD1
         /* = PA11 */ //(DO NOT USE FOR SPEEDUINO) USB
@@ -2280,9 +2280,9 @@ void setPinMapping(byte boardID)
         /* = PB6; */ //NRF_CE
         /* = PB7; */ //NRF_CS
         /* = PB8; */ //NRF_IRQ
-        pinCoil2 = PB9; //
+        /* = PB9; //
         /* = PB9; */ //
-        pinCoil4 = PB10; //TXD3
+        /* = PB10; //TXD3
         pinIdle1 = PB11; //RXD3
         pinIdle2 = PB12; //
         /* pinBoost = PB12; */ //
@@ -2321,16 +2321,16 @@ void setPinMapping(byte boardID)
         pinFlex = PD4;
         /* = PD5;*/ //TXD2
         /* = PD6; */ //RXD2
-        pinCoil1 = PD7; //
-        /* = PD7; */ //
-        /* = PD8; */ //
-        pinCoil5 = PD9;//
-        /* = PD10; */ //
-        /* = PD11; */ //
-        pinInjector1 = PD12; //
-        pinInjector2 = PD13; //
-        pinInjector3 = PD14; //
-        pinInjector4 = PD15; //
+        pinCoil4 = PD7; //
+        pinCoil3 = PD7; */ //
+        pinCoil5 = PD8; */ //
+        pinCoil6 = PD9;//
+        pinCoil8 = PD10; */ //
+        pinCoil7 = PD11; */ //
+        pinCoil1 = PD12; //
+        pinCoil2 = PD13; //
+        /* = PD14; //
+        /* = PD15; //
 
         //******************************************
         //******** PORTE CONNECTIONS *************** 
@@ -2343,14 +2343,14 @@ void setPinMapping(byte boardID)
         pinStepperStep = PE5; //
         pinFan = PE6; //
         pinStepperDir = PE7; //
-        /* = PE8; */ //
-        /* = PE9; */ //
-        /* = PE10; */ //
+        pinInjector8 = PE8; */ //
+        pinInjector7 = PE9; */ //
+        pinInjector6 = PE10; */ //
         pinInjector5 = PE11; //
-        pinInjector6 = PE12; //
-        /* = PE13; */ //
-        /* = PE14; */ //
-        /* = PE15; */ //
+        pinInjector4 = PE12; //
+        pinInjector3 = PE13; */ //
+        pinInjector2 = PE14; */ //
+        pinInjector1 = PE15; */ //
       #else
         #ifndef SMALL_FLASH_MODE //No support for bluepill here anyway
         //Pin mappings as per the v0.2 shield
